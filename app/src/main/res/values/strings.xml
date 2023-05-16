@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">IoTControlCenter</string>
+    <string name="log_in">Iniciar sesión</string>
+    <string name="email">Correo electrónico</string>
+    <string name="enter_email">Ingrese su correo</string>
+    <string name="password">Contraseña</string>
+    <string name="enter_your_password">Ingrese su contraseña</string>
+    <string name="enter">Ingresar</string>
+    <string name="home_token">Inicio</string>
 </resources>
