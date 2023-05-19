@@ -14,9 +14,13 @@
             android:theme="@style/Theme.IoTControlCenter"
             tools:targetApi="31">
         <activity
-                android:name=".view.HomeActivity"
+                android:name=".view.LightingActivity"
                 android:theme="@style/Theme.IoTControlCenter"
                 android:exported="false"/>
+        <activity
+                android:name=".view.HomeActivity"
+                android:exported="false"
+                android:theme="@style/Theme.IoTControlCenter"/>
         <activity
                 android:name=".view.LoginActivity"
                 android:exported="true">
