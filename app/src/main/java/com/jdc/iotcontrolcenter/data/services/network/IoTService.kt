@@ -3,6 +3,7 @@ package com.jdc.iotcontrolcenter.data.services.network
 import android.util.Log
 import com.jdc.iotcontrolcenter.data.model.DHT11Data
 import com.jdc.iotcontrolcenter.data.model.Door
+import com.jdc.iotcontrolcenter.data.model.Lightbulb
 import com.jdc.iotcontrolcenter.data.model.RequestLogin
 import com.jdc.iotcontrolcenter.di.NetworkModule
 import kotlinx.coroutines.Dispatchers
@@ -60,6 +61,27 @@ class IoTService {
         return try {
             withContext(Dispatchers.IO) {
                 retrofitService.updateDoor(door).body()!!
+            }
+        }catch(e : IOException){
+            Log.e("okhttpFindAllDoors","$e")
+            false
+        }
+    }
+
+    suspend fun findAllLightbulbs(): List<Lightbulb>{
+        return try {
+            withContext(Dispatchers.IO) {
+                retrofitService.listLightbulbs().body()!!
+            }
+        }catch(e : IOException){
+            Log.e("okhttpFindAllDoors","$e")
+            emptyList<Lightbulb>()
+        }
+    }
+    suspend fun updateLightbulb(lightbulb: Lightbulb): Boolean{
+        return try {
+            withContext(Dispatchers.IO) {
+                retrofitService.updateLightbulbState(lightbulb).body()!!
             }
         }catch(e : IOException){
             Log.e("okhttpFindAllDoors","$e")

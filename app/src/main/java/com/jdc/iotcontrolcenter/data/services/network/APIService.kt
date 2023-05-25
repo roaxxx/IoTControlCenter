@@ -1,9 +1,6 @@
 package com.jdc.iotcontrolcenter.data.services.network
 
-import com.jdc.iotcontrolcenter.data.model.Alarm
-import com.jdc.iotcontrolcenter.data.model.DHT11Data
-import com.jdc.iotcontrolcenter.data.model.Door
-import com.jdc.iotcontrolcenter.data.model.RequestLogin
+import com.jdc.iotcontrolcenter.data.model.*
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -32,4 +29,10 @@ interface APIService {
 
     @POST("alarm/UpdateAlarm")
     suspend fun updateAlarm(): Response<Boolean>
+
+    @GET("lightbulb/list")
+    suspend fun listLightbulbs(): Response<List<Lightbulb>>
+
+    @POST("lightbulb/update")
+    suspend fun updateLightbulbState(@Body lightbulb: Lightbulb): Response<Boolean>
 }

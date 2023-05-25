@@ -2,6 +2,7 @@ package com.jdc.iotcontrolcenter.data
 
 import com.jdc.iotcontrolcenter.data.model.DHT11Data
 import com.jdc.iotcontrolcenter.data.model.Door
+import com.jdc.iotcontrolcenter.data.model.Lightbulb
 import com.jdc.iotcontrolcenter.data.model.RequestLogin
 import com.jdc.iotcontrolcenter.data.services.network.IoTService
 
@@ -30,5 +31,13 @@ class ApiRespository {
 
     suspend fun updateDoor(door: Door): Boolean{
         return ioTService.updateDoor(door)
+    }
+
+    suspend fun listAllLightbulbs():List<Lightbulb>{
+        return ioTService.findAllLightbulbs()
+    }
+
+    suspend fun updateLightbulb(lightbulb: Lightbulb):Boolean{
+        return ioTService.updateLightbulb(lightbulb)
     }
 }
