@@ -35,4 +35,16 @@ interface APIService {
 
     @POST("lightbulb/update")
     suspend fun updateLightbulbState(@Body lightbulb: Lightbulb): Response<Boolean>
+
+    @GET("alarm/findAlarms")
+    suspend fun listAllAlarms(): Response<List<Alarm>>
+
+    @POST("alarm/UpdateAlarm")
+    suspend fun updateAlarm(@Body alarm: Alarm): Response<Boolean>
+
+    @GET("notifications/listNotifications")
+    suspend fun listNotifications(): Response<List<Notification>>
+
+    @GET("notifications/deleteAll")
+    suspend fun deleteAllNotifications(): Response<Boolean>
 }

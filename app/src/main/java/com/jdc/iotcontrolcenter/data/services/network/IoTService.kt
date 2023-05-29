@@ -1,10 +1,7 @@
 package com.jdc.iotcontrolcenter.data.services.network
 
 import android.util.Log
-import com.jdc.iotcontrolcenter.data.model.DHT11Data
-import com.jdc.iotcontrolcenter.data.model.Door
-import com.jdc.iotcontrolcenter.data.model.Lightbulb
-import com.jdc.iotcontrolcenter.data.model.RequestLogin
+import com.jdc.iotcontrolcenter.data.model.*
 import com.jdc.iotcontrolcenter.di.NetworkModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -54,7 +51,7 @@ class IoTService {
             }
         }catch(e : IOException){
             Log.e("okhttpFindAllDoors","$e")
-            emptyList<Door>()
+            emptyList()
         }
     }
     suspend fun updateDoor(door: Door): Boolean{
@@ -75,7 +72,7 @@ class IoTService {
             }
         }catch(e : IOException){
             Log.e("okhttpFindAllDoors","$e")
-            emptyList<Lightbulb>()
+            emptyList()
         }
     }
     suspend fun updateLightbulb(lightbulb: Lightbulb): Boolean{
@@ -88,4 +85,48 @@ class IoTService {
             false
         }
     }
+
+    suspend fun findAllAlarms(): List<Alarm>{
+        return try {
+            withContext(Dispatchers.IO) {
+                retrofitService.listAllAlarms().body()!!
+            }
+        }catch(e : IOException){
+            Log.e("okhttpFindAllAlarms","$e")
+            emptyList()
+        }
+    }
+    suspend fun updateAlarm(alarm: Alarm): Boolean{
+        return try {
+            withContext(Dispatchers.IO) {
+                retrofitService.updateAlarm(alarm).body()!!
+            }
+        }catch(e : IOException){
+            Log.e("okhttpupdateAlarm","$e")
+            false
+        }
+    }
+
+    suspend fun findAllNotifications(): List<Notification>{
+        return try {
+            withContext(Dispatchers.IO) {
+                retrofitService.listNotifications().body()!!
+            }
+        }catch(e : IOException){
+            Log.e("okhttpFindAllNotif","$e")
+            emptyList()
+        }
+    }
+
+    suspend fun deleteAllNotifications(): Boolean{
+        return try {
+            withContext(Dispatchers.IO) {
+                retrofitService.deleteAllNotifications().body()!!
+            }
+        }catch(e : IOException){
+            Log.e("okhttdeleteNots","$e")
+            false
+        }
+    }
+
 }

@@ -51,4 +51,10 @@ class LoginActivity : AppCompatActivity() {
         }
 
     }
+
+    override fun onResume() {
+        super.onResume()
+        binding.userEmail.setText("")
+        binding.userPassword.setText("")
+    }
 }

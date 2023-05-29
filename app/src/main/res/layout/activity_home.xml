@@ -18,11 +18,14 @@
                     android:orientation="horizontal"
                     android:paddingHorizontal="24dp"
                     android:gravity="center"
+                    android:background="@drawable/light_blue_card_bg"
                     android:layout_marginBottom="10dp"
                     android:layout_height="60dp">
+
                 <ImageButton
                         android:layout_width="wrap_content"
                         android:src="@drawable/ic_notification"
+                        android:id="@+id/showNotifications"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:layout_height="wrap_content"/>
                 <TextView
@@ -37,6 +40,7 @@
                 <ImageButton
                         android:layout_width="wrap_content"
                         android:src="@drawable/ic_close_session"
+                        android:id="@+id/closeSessionButton"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:layout_height="wrap_content"/>
             </LinearLayout>
@@ -262,7 +266,7 @@
                                     android:orientation="horizontal">
 
                                 <ImageView
-                                        android:id="@+id/doorVector"
+                                        android:id="@+id/doorImg"
                                         android:layout_width="0dp"
                                         android:layout_weight="0.2"
                                         android:layout_height="wrap_content"
@@ -301,14 +305,54 @@
                         <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_weight="0.5"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:orientation="vertical"
-                                android:id="@+id/lightingCard"
                                 android:focusable="true"
                                 android:layout_marginEnd="10dp"
                                 android:background="@drawable/light_blue_card_bg"
                                 android:padding="10dp">
+                            <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
 
+                                <ImageView
+                                        android:id="@+id/intruderAlarmImg"
+                                        android:layout_width="wrap_content"
+                                        android:layout_marginLeft="10dp"
+                                        android:layout_height="wrap_content"
+                                        android:src="@drawable/ic_desactived_alarm"/>
+                                <TextView
+                                        android:id="@+id/lightingTXT"
+                                        android:layout_width="match_parent"
+                                        android:textStyle="bold"
+                                        android:layout_height="wrap_content"
+                                        android:text="Alarma de seguridad"
+                                        android:textSize="14sp"
+                                        android:textColor="@color/dark_blue"/>
+                            </LinearLayout>
+                            <Button
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:backgroundTint="@color/dark_blue"
+                                    android:textAllCaps="false"
+                                    app:cornerRadius="10dp"
+                                    android:id="@+id/changeIntruderAlarmState"
+                                    android:textSize="16sp"
+                                    android:paddingVertical="10dp"
+                                    android:paddingHorizontal="10dp"
+                                    android:text="Activar"/>
+
+                        </LinearLayout>
+                        <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_weight="0.5"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:id="@+id/lightingCard"
+                                android:gravity="center_vertical"
+                                android:background="@drawable/light_blue_card_bg"
+                                android:padding="10dp">
                             <TextView
                                     android:id="@+id/lightingDate"
                                     android:layout_width="match_parent"
@@ -352,47 +396,104 @@
                                             android:textColor="@color/dark_gray"/>
                                 </LinearLayout>
                             </LinearLayout>
+
                         </LinearLayout>
+                    </TableRow>
+                    <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/blue_card"
+                            android:layout_marginBottom="10dp">
+                        <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:background="@drawable/light_blue_card_bg"
+                                android:padding="10dp">
+
+                            <ImageView
+                                    android:id="@+id/fireAlarmImg"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="0.15"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_fire"/>
+                            <TextView
+                                    android:id="@+id/fireAlarmState"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="0.45"
+                                    android:textStyle="bold"
+                                    android:gravity="center_vertical"
+                                    android:layout_height="match_parent"
+                                    android:text="Alarma contra incendios: Activa"
+                                    android:textSize="14sp"
+                                    android:textColor="@color/dark_blue"/>
+
+                            <Button
+                                    android:layout_width="0dp"
+                                    android:layout_weight="0.4"
+                                    android:layout_height="wrap_content"
+                                    android:backgroundTint="@color/dark_blue"
+                                    android:textAllCaps="false"
+                                    app:cornerRadius="10dp"
+                                    android:id="@+id/configuraFireAlarmButton"
+                                    android:textSize="15sp"
+                                    android:paddingVertical="10dp"
+                                    android:paddingHorizontal="8dp"
+                                    android:text="Configurar"/>
+                        </LinearLayout>
+                    </TableRow>
+                    <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp">
+
                         <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_weight="0.5"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical"
-                                android:gravity="center_vertical"
+                                android:focusable="true"
                                 android:background="@drawable/light_blue_card_bg"
-                                android:padding="10dp">
+                                android:padding="20dp">
 
-                            <LinearLayout
+                            <TextView
+                                    android:id="@+id/garageLastUpdate"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:orientation="horizontal">
+                                    android:text="May 15, 21:25"
+                                    android:textSize="12sp"
+                                    android:layout_marginVertical="5dp"
+                                    android:textColor="@color/dark_gray"/>
 
-                                <ImageView
-                                        android:id="@+id/alertVector"
-                                        android:layout_width="wrap_content"
-                                        android:layout_marginLeft="10dp"
-                                        android:layout_height="wrap_content"
-                                        android:src="@drawable/ic_desactived_alarm"/>
-                                <TextView
-                                        android:id="@+id/lightingTXT"
-                                        android:layout_width="match_parent"
-                                        android:textStyle="bold"
-                                        android:layout_height="wrap_content"
-                                        android:text="Alarma de seguridad"
-                                        android:textSize="14sp"
-                                        android:textColor="@color/dark_blue"/>
-                            </LinearLayout>
+                            <TextView
+                                    android:id="@+id/garageDoorState"
+                                    android:layout_width="wrap_content"
+                                    android:textStyle="bold"
+                                    android:layout_height="wrap_content"
+                                    android:text="Puerta de garaje"
+                                    android:textSize="14sp"
+                                    android:textColor="@color/dark_blue"/>
+
                             <Button
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:backgroundTint="@color/dark_blue"
                                     android:textAllCaps="false"
                                     app:cornerRadius="10dp"
-                                    android:id="@+id/changeAlarmState"
+                                    android:id="@+id/changeGarageDoorState"
                                     android:textSize="16sp"
                                     android:paddingVertical="10dp"
                                     android:paddingHorizontal="10dp"
-                                    android:text="Activar"/>
+                                    android:text="Abrir"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_weight="0.5"
+                                android:layout_height="wrap_content">
+
                         </LinearLayout>
                     </TableRow>
                 </TableLayout>

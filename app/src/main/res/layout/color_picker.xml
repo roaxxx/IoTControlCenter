@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="20dp"
+        android:paddingBottom="10dp"
+        android:paddingHorizontal="20dp"
+        android:layout_height="match_parent">
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/dark_blue"
+            android:id="@+id/alarmSettingsTitle"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            android:text="Color de iluminación"
+            android:layout_marginBottom="10dp"/>
+    <Spinner android:layout_width="match_parent"
+             android:id="@+id/colorList"
+             android:padding="10dp"
+             android:background="@drawable/light_blue_card_bg"
+             android:layout_height="wrap_content"/>
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_height="wrap_content">
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:textAllCaps="false"
+                android:layout_marginTop="15dp"
+                android:id="@+id/cancelButton"
+                app:cornerRadius="10dp"
+                android:textSize="16sp"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="15dp"
+                android:layout_marginEnd="10dp"
+                android:text="Cancelar"/>
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/dark_blue"
+                android:textAllCaps="false"
+                android:layout_marginTop="15dp"
+                android:id="@+id/applyButton"
+                android:textSize="16sp"
+                app:cornerRadius="10dp"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="15dp"
+                android:text="Aplicar"/>
+    </LinearLayout>
+</LinearLayout>

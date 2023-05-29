@@ -11,6 +11,8 @@ class LoadingDialog {
         val builder = AlertDialog.Builder(context)
         val view = (context as Activity).layoutInflater.inflate(R.layout.loading_alert_dialog, null)
         builder.setView(view)
-        return builder.create()
+        val loadingDialog = builder.create()
+        loadingDialog.window?.setBackgroundDrawableResource(R.drawable.light_blue_card_bg)
+        return loadingDialog
     }
 }
