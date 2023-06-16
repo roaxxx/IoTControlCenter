@@ -11,9 +11,15 @@ class IoTService {
 
     private val retrofitService = NetworkModule.buildService(APIService::class.java)
 
-    suspend fun loginInApi(requestLogin: RequestLogin): String{
+    suspend fun loginInApi(requestLogin: RequestLogin): String?{
         return withContext(Dispatchers.IO){
-            retrofitService.login(requestLogin).body()!!
+            val response = retrofitService.login(requestLogin)
+            if(response.isSuccessful){
+                response.body()
+            }else{
+                Log.i("http","Response isn´t not successful")
+                null
+            }
         }
     }
 
@@ -24,6 +30,7 @@ class IoTService {
     }
 
     suspend fun findAllDHT11Records(): List<DHT11Data>{
+
         return try {
             withContext(Dispatchers.IO) {
                 retrofitService.listAllDHTData().body()!!
@@ -128,5 +135,4 @@ class IoTService {
             false
         }
     }
-
 }

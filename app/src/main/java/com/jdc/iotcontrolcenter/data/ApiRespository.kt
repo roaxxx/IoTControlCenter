@@ -4,9 +4,10 @@ import com.jdc.iotcontrolcenter.data.model.*
 import com.jdc.iotcontrolcenter.data.services.network.IoTService
 
 class ApiRespository {
+
     private val ioTService = IoTService()
 
-    suspend fun loginInApi(requestLogin: RequestLogin): String{
+    suspend fun loginInApi(requestLogin: RequestLogin): String?{
         return ioTService.loginInApi(requestLogin)
     }
 

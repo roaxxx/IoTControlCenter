@@ -4,14 +4,13 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
+import com.jdc.iotcontrolcenter.IoTControlCenterApplication
 import com.jdc.iotcontrolcenter.data.model.RequestLogin
 import com.jdc.iotcontrolcenter.databinding.LoginMainBinding
 import com.jdc.iotcontrolcenter.domain.Login
 import kotlinx.coroutines.launch
-import okio.IOException
 
 class LoginActivity : AppCompatActivity() {
 
@@ -23,7 +22,6 @@ class LoginActivity : AppCompatActivity() {
         binding = LoginMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         loadingDialog = LoadingDialog().createProgressDialog(this)
-
 
         binding.enterButton.setOnClickListener {
             initLogin()
@@ -37,19 +35,25 @@ class LoginActivity : AppCompatActivity() {
 
             val intent = Intent(this@LoginActivity,HomeActivity::class.java)
             loadingDialog.show()
-            val userName = login.invoke(RequestLogin(userEmail,userPassword))
-            if(userName!=null){
-                intent.putExtra("userName",userName)
-                this@LoginActivity.startActivity(intent)
-            }else{
+            val loginResponse = login.invoke(RequestLogin(userEmail,userPassword))
+            Log.i("token","token: $loginResponse")
+
+            if(loginResponse == IoTControlCenterApplication.USER_CREDENTIAL_ERROR){
                 SimpleDialog.makeDialog(
                     this@LoginActivity,
                     "Error al iniciar sesión",
                     "Usuario i/o contraseña incorrectos")
+            }else if (loginResponse == IoTControlCenterApplication.SERVER_CONNECTION_ERROR){
+                SimpleDialog.makeDialog(
+                    this@LoginActivity,
+                    "Error de conexión",
+                    "Ha ocurrido un error al intentar conectar al servidor, por favor, intentelo más tarde")
+            }else{
+                intent.putExtra("userName",loginResponse)
+                this@LoginActivity.startActivity(intent)
             }
             loadingDialog.hide()
         }
-
     }
 
     override fun onResume() {

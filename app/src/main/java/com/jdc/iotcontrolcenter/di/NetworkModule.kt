@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 
 object NetworkModule {
 
-    private val BASE_URL = "http://192.168.18.4:8080"
+    private val BASE_URL = "http://192.168.18.4:8080/"
 
     val gson = GsonBuilder().setLenient().create()
 

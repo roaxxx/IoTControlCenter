@@ -6,8 +6,8 @@ import retrofit2.http.*
 
 interface APIService {
 
-    @POST("login")
-    suspend fun login(@Body requestLogin: RequestLogin): Response<String>
+    @POST("authenticateUser")
+    suspend fun login(@Body requestLogin: RequestLogin): Response<String?>
 
     @GET("dhtSensor/getLatest")
     suspend fun getLastDHT11Data():Response<DHT11Data>
