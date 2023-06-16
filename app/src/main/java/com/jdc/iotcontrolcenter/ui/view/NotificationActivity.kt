@@ -1,4 +1,4 @@
-package com.jdc.iotcontrolcenter.view
+package com.jdc.iotcontrolcenter.ui.view
 
 
 
@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.jdc.iotcontrolcenter.data.model.Notification
 import com.jdc.iotcontrolcenter.databinding.ActivityNotificationBinding
 import com.jdc.iotcontrolcenter.domain.NotificationManager
-import com.jdc.iotcontrolcenter.view.adapters.NotificationRecyclerViewAdapter
+import com.jdc.iotcontrolcenter.ui.view.adapters.NotificationRecyclerViewAdapter
 import kotlinx.coroutines.launch
 
 class NotificationActivity : AppCompatActivity() {

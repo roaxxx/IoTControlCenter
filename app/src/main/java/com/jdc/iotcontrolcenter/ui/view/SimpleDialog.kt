@@ -1,4 +1,4 @@
-package com.jdc.iotcontrolcenter.view
+package com.jdc.iotcontrolcenter.ui.view
 
 import android.content.Context
 import androidx.appcompat.app.AlertDialog

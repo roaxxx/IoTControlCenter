@@ -1,4 +1,4 @@
-package com.jdc.iotcontrolcenter.view
+package com.jdc.iotcontrolcenter.ui.view
 
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +16,7 @@ import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
 import kotlinx.coroutines.launch
 
-class TemperatureActivity : AppCompatActivity() {
+class HumidityActivity : AppCompatActivity() {
 
     private val temperatureSensorManagement = TemperatureSensorManagement()
     private lateinit var loadingDialog: AlertDialog
@@ -34,8 +34,7 @@ class TemperatureActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_temperature)
-
+        setContentView(R.layout.activity_humidity)
         loadingDialog = LoadingDialog().createProgressDialog(this)
         loadingDialog.show()
 
@@ -51,7 +50,6 @@ class TemperatureActivity : AppCompatActivity() {
             }
         }
     }
-
     override fun onResume() {
         super.onResume()
         handler.postDelayed(dataPointHandler, updateInterval)
@@ -73,7 +71,7 @@ class TemperatureActivity : AppCompatActivity() {
 
     private fun initGraphView() {
         series.isDrawDataPoints = true
-        series.color = Color.rgb(240, 105, 33)
+        series.color = Color.rgb(199, 0, 57)
         graph.addSeries(series)
 
         val gridLabelRenderer = graph.gridLabelRenderer
@@ -82,11 +80,12 @@ class TemperatureActivity : AppCompatActivity() {
         graph.viewport.isScrollable = true
         graph.viewport.setScalableY(true)
 
+        loadingDialog.hide()
     }
 
     private fun updateGraphView() {
         val dataPoints = dataList.mapIndexed { index, data ->
-            DataPoint(index.toDouble(), data.temperature.toDouble())
+            DataPoint(index.toDouble(), data.humidity.toDouble())
         }.toTypedArray()
 
         series.resetData(dataPoints)

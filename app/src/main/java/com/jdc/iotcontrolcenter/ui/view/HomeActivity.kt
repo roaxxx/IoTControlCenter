@@ -1,4 +1,4 @@
-package com.jdc.iotcontrolcenter.view
+package com.jdc.iotcontrolcenter.ui.view
 
 import android.annotation.SuppressLint
 import android.content.Intent

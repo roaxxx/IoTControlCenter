@@ -1,4 +1,4 @@
-package com.jdc.iotcontrolcenter.view
+package com.jdc.iotcontrolcenter.ui.view
 
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +16,7 @@ import com.jdc.iotcontrolcenter.data.model.Lightbulb
 import com.jdc.iotcontrolcenter.databinding.ActivityLightingBinding
 import com.jdc.iotcontrolcenter.databinding.ColorPickerBinding
 import com.jdc.iotcontrolcenter.domain.LightbulbManager
-import com.jdc.iotcontrolcenter.view.adapters.LightBulbRecyclerViewAdapter
+import com.jdc.iotcontrolcenter.ui.view.adapters.LightBulbRecyclerViewAdapter
 import kotlinx.coroutines.launch
 
 class LightingActivity : AppCompatActivity() {

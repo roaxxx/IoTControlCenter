@@ -11,127 +11,135 @@ class IoTService {
 
     private val retrofitService = NetworkModule.buildService(APIService::class.java)
 
-    suspend fun loginInApi(requestLogin: RequestLogin): String?{
-        return withContext(Dispatchers.IO){
+    suspend fun loginInApi(requestLogin: RequestLogin): String? {
+        return withContext(Dispatchers.IO) {
             val response = retrofitService.login(requestLogin)
-            if(response.isSuccessful){
+            if (response.isSuccessful) {
                 response.body()
-            }else{
-                Log.i("http","Response isn´t not successful")
+            } else {
                 null
             }
         }
     }
 
-    suspend fun findLatestDHT11Data(): DHT11Data{
-        return withContext(Dispatchers.IO){
-            retrofitService.getLastDHT11Data().body()!!
-        }
-    }
-
-    suspend fun findAllDHT11Records(): List<DHT11Data>{
-
-        return try {
-            withContext(Dispatchers.IO) {
-                retrofitService.listAllDHTData().body()!!
+    suspend fun findLatestDHT11Data(): DHT11Data {
+        return withContext(Dispatchers.IO) {
+            val response = retrofitService.getLastDHT11Data()
+            if (response.isSuccessful) {
+                response.body()!!
+            } else {
+                DHT11Data(0, 0, 0, "MMM, d Y", "hh:mm:ss")
             }
-        }catch(e : IOException){
-            Log.e("findAllDHT11Records","$e")
-            emptyList<DHT11Data>()
         }
     }
-    suspend fun deleteDHTRecords(): String?{
+
+    suspend fun findAllDHT11Records(): List<DHT11Data> {
+
+        return withContext(Dispatchers.IO) {
+            val response = retrofitService.listAllDHTData()
+            if (response.isSuccessful) {
+                response.body()!!
+            } else {
+                emptyList()
+            }
+        }
+    }
+
+    suspend fun deleteDHTRecords(): String? {
         return try {
             withContext(Dispatchers.IO) {
                 retrofitService.deleteDHT11Data().body()
             }
-        }catch(e : IOException){
-            Log.e("deleteDHTRecords","$e")
+        } catch (e: IOException) {
+            Log.e("deleteDHTRecords", "$e")
             return null
         }
     }
 
-    suspend fun findAllDoors(): List<Door>{
+    suspend fun findAllDoors(): List<Door> {
         return try {
             withContext(Dispatchers.IO) {
                 retrofitService.findAllDoors().body()!!
             }
-        }catch(e : IOException){
-            Log.e("okhttpFindAllDoors","$e")
+        } catch (e: IOException) {
+            Log.e("okhttpFindAllDoors", "$e")
             emptyList()
         }
     }
-    suspend fun updateDoor(door: Door): Boolean{
+
+    suspend fun updateDoor(door: Door): Boolean {
         return try {
             withContext(Dispatchers.IO) {
                 retrofitService.updateDoor(door).body()!!
             }
-        }catch(e : IOException){
-            Log.e("okhttpFindAllDoors","$e")
+        } catch (e: IOException) {
+            Log.e("okhttpFindAllDoors", "$e")
             false
         }
     }
 
-    suspend fun findAllLightbulbs(): List<Lightbulb>{
+    suspend fun findAllLightbulbs(): List<Lightbulb> {
         return try {
             withContext(Dispatchers.IO) {
                 retrofitService.listLightbulbs().body()!!
             }
-        }catch(e : IOException){
-            Log.e("okhttpFindAllDoors","$e")
+        } catch (e: IOException) {
+            Log.e("okhttpFindAllDoors", "$e")
             emptyList()
         }
     }
-    suspend fun updateLightbulb(lightbulb: Lightbulb): Boolean{
+
+    suspend fun updateLightbulb(lightbulb: Lightbulb): Boolean {
         return try {
             withContext(Dispatchers.IO) {
                 retrofitService.updateLightbulbState(lightbulb).body()!!
             }
-        }catch(e : IOException){
-            Log.e("okhttpFindAllDoors","$e")
+        } catch (e: IOException) {
+            Log.e("okhttpFindAllDoors", "$e")
             false
         }
     }
 
-    suspend fun findAllAlarms(): List<Alarm>{
+    suspend fun findAllAlarms(): List<Alarm> {
         return try {
             withContext(Dispatchers.IO) {
                 retrofitService.listAllAlarms().body()!!
             }
-        }catch(e : IOException){
-            Log.e("okhttpFindAllAlarms","$e")
+        } catch (e: IOException) {
+            Log.e("okhttpFindAllAlarms", "$e")
             emptyList()
         }
     }
-    suspend fun updateAlarm(alarm: Alarm): Boolean{
+
+    suspend fun updateAlarm(alarm: Alarm): Boolean {
         return try {
             withContext(Dispatchers.IO) {
                 retrofitService.updateAlarm(alarm).body()!!
             }
-        }catch(e : IOException){
-            Log.e("okhttpupdateAlarm","$e")
+        } catch (e: IOException) {
+            Log.e("okhttpupdateAlarm", "$e")
             false
         }
     }
 
-    suspend fun findAllNotifications(): List<Notification>{
+    suspend fun findAllNotifications(): List<Notification> {
         return try {
             withContext(Dispatchers.IO) {
                 retrofitService.listNotifications().body()!!
             }
-        }catch(e : IOException){
-            Log.e("okhttpFindAllNotif","$e")
+        } catch (e: IOException) {
+            Log.e("okhttpFindAllNotif", "$e")
             emptyList()
         }
     }
 
-    suspend fun deleteAllNotifications(): Boolean{
+    suspend fun deleteAllNotifications(): Boolean {
         return try {
             withContext(Dispatchers.IO) {
                 retrofitService.deleteAllNotifications().body()!!
             }
-        }catch(e : IOException){
-            Log.e("okhttdeleteNots","$e")
+        } catch (e: IOException) {
+            Log.e("okhttdeleteNots", "$e")
             false
         }
     }

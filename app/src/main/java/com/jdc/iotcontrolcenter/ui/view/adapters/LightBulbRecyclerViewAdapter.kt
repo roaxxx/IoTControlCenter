@@ -1,4 +1,4 @@
-package com.jdc.iotcontrolcenter.view.adapters
+package com.jdc.iotcontrolcenter.ui.view.adapters
 
 import android.view.LayoutInflater
 import android.view.View

@@ -17,27 +17,27 @@
             android:usesCleartextTraffic="true"
             tools:targetApi="31">
         <activity
-                android:name=".view.NotificationActivity"
+                android:name=".ui.view.NotificationActivity"
                 android:theme="@style/Theme.IoTControlCenter"
                 android:exported="false"/>
         <activity
-                android:name=".view.HumidityActivity"
+                android:name=".ui.view.HumidityActivity"
                 android:exported="false"
                 android:theme="@style/Theme.IoTControlCenter"/>
         <activity
-                android:name=".view.TemperatureActivity"
+                android:name=".ui.view.TemperatureActivity"
                 android:exported="false"
                 android:theme="@style/Theme.IoTControlCenter"/>
         <activity
-                android:name=".view.LightingActivity"
+                android:name=".ui.view.LightingActivity"
                 android:exported="false"
                 android:theme="@style/Theme.IoTControlCenter"/>
         <activity
-                android:name=".view.HomeActivity"
+                android:name=".ui.view.HomeActivity"
                 android:exported="false"
                 android:theme="@style/Theme.IoTControlCenter"/>
         <activity
-                android:name=".view.LoginActivity"
+                android:name=".ui.view.LoginActivity"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
