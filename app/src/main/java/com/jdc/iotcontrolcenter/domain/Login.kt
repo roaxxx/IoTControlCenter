@@ -5,10 +5,13 @@ import com.jdc.iotcontrolcenter.IoTControlCenterApplication
 import com.jdc.iotcontrolcenter.data.ApiRespository
 import com.jdc.iotcontrolcenter.data.model.RequestLogin
 import java.io.IOException
+import javax.inject.Inject
 
-class Login {
-
-    private val apiRespository = ApiRespository()
+class Login @Inject constructor(private val apiRespository :ApiRespository) {
+    companion object {
+        val USER_CREDENTIAL_ERROR = "INVALID_CREDENTIAL_ERR"
+        val SERVER_CONNECTION_ERROR = "SERVER_CONN_ERR"
+    }
 
     suspend operator fun  invoke(requestLogin: RequestLogin): String {
         return try{
@@ -16,11 +19,11 @@ class Login {
             if(apiResponse != null){
                 apiResponse!!
             }else{
-                IoTControlCenterApplication.USER_CREDENTIAL_ERROR
+                USER_CREDENTIAL_ERROR
             }
         }catch (e : IOException){
             Log.i("http","No connected to server")
-            IoTControlCenterApplication.SERVER_CONNECTION_ERROR
+            SERVER_CONNECTION_ERROR
         }
     }
 

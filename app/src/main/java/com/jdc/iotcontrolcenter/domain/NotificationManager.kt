@@ -4,10 +4,9 @@ import android.util.Log
 import com.jdc.iotcontrolcenter.data.ApiRespository
 import com.jdc.iotcontrolcenter.data.model.Notification
 import okio.IOException
+import javax.inject.Inject
 
-class NotificationManager {
-
-    private val apiRepository = ApiRespository()
+class NotificationManager @Inject constructor(private val apiRepository : ApiRespository) {
 
     suspend fun getAllNotifications(): MutableList<Notification>{
         return try{

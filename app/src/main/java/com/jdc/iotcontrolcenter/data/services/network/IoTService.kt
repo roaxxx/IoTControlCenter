@@ -6,8 +6,9 @@ import com.jdc.iotcontrolcenter.di.NetworkModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okio.IOException
+import javax.inject.Inject
 
-class IoTService {
+class IoTService @Inject constructor() {
 
     private val retrofitService = NetworkModule.buildService(APIService::class.java)
 

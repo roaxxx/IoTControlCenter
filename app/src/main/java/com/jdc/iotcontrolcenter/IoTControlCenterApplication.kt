@@ -1,9 +1,7 @@
 package com.jdc.iotcontrolcenter
 
-class IoTControlCenterApplication {
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-    companion object{
-        val  USER_CREDENTIAL_ERROR = "INVALID_CREDENTIAL_ERR"
-        val SERVER_CONNECTION_ERROR = "SERVER_CONN_ERR"
-    }
-}
+@HiltAndroidApp
+class IoTControlCenterApplication : Application()

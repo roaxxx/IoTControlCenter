@@ -7,16 +7,16 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
-import com.jdc.iotcontrolcenter.IoTControlCenterApplication
 import com.jdc.iotcontrolcenter.data.model.RequestLogin
 import com.jdc.iotcontrolcenter.databinding.LoginMainBinding
 import com.jdc.iotcontrolcenter.domain.Login
 import com.jdc.iotcontrolcenter.ui.viewmodel.LoginViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding : LoginMainBinding
-    private val login = Login()
     private lateinit var loadingDialog: AlertDialog
     private val loginViewModel : LoginViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,13 +31,13 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel.responseLoginModel.observe(this, Observer { loginResponse ->
 
             Log.i("loginResponse","La respuesta observada $loginResponse")
-            if(loginResponse == IoTControlCenterApplication.USER_CREDENTIAL_ERROR){
+            if(loginResponse == Login.USER_CREDENTIAL_ERROR){
                 SimpleDialog.makeDialog(
                     this,
                     "Error al iniciar sesión",
                     "Usuario i/o contraseña incorrectos"
                 )
-            }else if (loginResponse == IoTControlCenterApplication.SERVER_CONNECTION_ERROR){
+            }else if (loginResponse == Login.SERVER_CONNECTION_ERROR){
                 SimpleDialog.makeDialog(
                     this,
                     "Error de conexión",

@@ -8,7 +8,9 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jdc.iotcontrolcenter.R
@@ -17,13 +19,17 @@ import com.jdc.iotcontrolcenter.databinding.ActivityLightingBinding
 import com.jdc.iotcontrolcenter.databinding.ColorPickerBinding
 import com.jdc.iotcontrolcenter.domain.LightbulbManager
 import com.jdc.iotcontrolcenter.ui.view.adapters.LightBulbRecyclerViewAdapter
+import com.jdc.iotcontrolcenter.ui.viewmodel.LightbulbViewModel
+import dagger.hilt.EntryPoint
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class LightingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLightingBinding
     private lateinit var recyclerViewAdapter: LightBulbRecyclerViewAdapter
-    private val lightbulbManager = LightbulbManager()
+    private val lightbulbViewModel : LightbulbViewModel by viewModels()
     private val lightbulbList = mutableListOf<Lightbulb>()
     private val COLOR_LIST = listOf(
         "0,0,1","1,0,0","0,1,1","0,1,0","1,1,0","1,0,1","1,1,1","0,0,0"
@@ -32,7 +38,7 @@ class LightingActivity : AppCompatActivity() {
     private val updateInterval = 2000L
     private val dataPointHandler: Runnable = object : Runnable {
         override fun run() {
-            changeRecyclerViewData()
+            lightbulbViewModel.getLightbulbsList()
             handler.postDelayed(this, updateInterval)
         }
     }
@@ -42,15 +48,16 @@ class LightingActivity : AppCompatActivity() {
         setContentView(binding.root)
         initRecyclerView()
         changeRecyclerViewData()
+        lightbulbViewModel.getLightbulbsList()
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun changeRecyclerViewData() {
-        lightbulbList.clear()
-        lifecycleScope.launch{
-            lightbulbList.addAll(lightbulbManager.listLightbulbs())
+        lightbulbViewModel.lightbulListViewModel.observe(this, Observer { lightbulbMutablelist ->
+            lightbulbList.clear()
+            lightbulbList.addAll(lightbulbMutablelist)
             recyclerViewAdapter.notifyDataSetChanged()
-        }
+        })
     }
 
     private fun initRecyclerView() {
@@ -75,12 +82,11 @@ class LightingActivity : AppCompatActivity() {
                 }
             }
             lifecycleScope.launch {
-                lightbulbManager.updateLightbulb(lightbulbList[i])
+                lightbulbViewModel.updateLightbulbState(lightbulbList[i])
             }
         }catch ( e: IndexOutOfBoundsException){
             Log.e("listado actualizandose","$e")
         }
-
     }
 
     private fun showColorPickerDialog(lightbulb: Lightbulb) {
@@ -111,7 +117,7 @@ class LightingActivity : AppCompatActivity() {
         colorPickerBinding.applyButton.setOnClickListener {
             lifecycleScope.launch {
                 lightbulb.bulbValue = pickerColor
-                lightbulbManager.updateLightbulb(lightbulb)
+                lightbulbViewModel.updateLightbulbState(lightbulb)
             }
         }
     }

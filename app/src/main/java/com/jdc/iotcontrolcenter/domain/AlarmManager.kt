@@ -4,10 +4,9 @@ import android.util.Log
 import com.jdc.iotcontrolcenter.data.ApiRespository
 import com.jdc.iotcontrolcenter.data.model.Alarm
 import okio.IOException
+import javax.inject.Inject
 
-class AlarmManager {
-
-    private val apiRepository = ApiRespository()
+class AlarmManager @Inject constructor(private val apiRepository : ApiRespository) {
 
     suspend fun getAllAlarms(): MutableList<Alarm>{
         return try{

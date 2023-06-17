@@ -1,21 +1,25 @@
 package com.jdc.iotcontrolcenter.ui.view
 
-
-
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jdc.iotcontrolcenter.data.model.Notification
 import com.jdc.iotcontrolcenter.databinding.ActivityNotificationBinding
 import com.jdc.iotcontrolcenter.domain.NotificationManager
 import com.jdc.iotcontrolcenter.ui.view.adapters.NotificationRecyclerViewAdapter
+import com.jdc.iotcontrolcenter.ui.viewmodel.NotificationViewModel
+import dagger.hilt.EntryPoint
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class NotificationActivity : AppCompatActivity() {
 
-    private val notificationManager = NotificationManager()
+    private val notificationViewModel :NotificationViewModel by viewModels()
     private lateinit var binding :ActivityNotificationBinding
     private lateinit var notificationAdapter: NotificationRecyclerViewAdapter
     private val notificationList = mutableListOf<Notification>()
@@ -24,7 +28,7 @@ class NotificationActivity : AppCompatActivity() {
     private val updateInterval = 1000L
     private val dataPointHandler: Runnable = object : Runnable {
         override fun run() {
-            showNotifications()
+            notificationViewModel.getAllNotifications()
             handler.postDelayed(this, updateInterval)
         }
     }
@@ -36,18 +40,20 @@ class NotificationActivity : AppCompatActivity() {
 
         initRecyclerView()
         binding.deleteNotifications.setOnClickListener {
-            lifecycleScope.launch { notificationManager.deleteAllNotifications() }
+            notificationViewModel.deleteAllNotifications()
 
         }
         showNotifications()
+        showNotifications()
+        notificationViewModel.getAllNotifications()
     }
 
     private fun showNotifications() {
-        notificationList.clear()
-        lifecycleScope.launch {
-            notificationList.addAll(notificationManager.getAllNotifications())
+        notificationViewModel.noticationLisObservable.observe(this, Observer { notifications ->
+            notificationList.clear()
+            notificationList.addAll(notifications)
             notificationAdapter.notifyDataSetChanged()
-        }
+        })
     }
 
     private fun initRecyclerView() {

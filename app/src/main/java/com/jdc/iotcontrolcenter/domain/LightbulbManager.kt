@@ -4,10 +4,9 @@ import android.util.Log
 import com.jdc.iotcontrolcenter.data.ApiRespository
 import com.jdc.iotcontrolcenter.data.model.Lightbulb
 import okio.IOException
+import javax.inject.Inject
 
-class LightbulbManager {
-
-    private val apiRepository = ApiRespository()
+class LightbulbManager @Inject constructor(private val apiRepository : ApiRespository) {
 
     suspend fun listLightbulbs():MutableList<Lightbulb>{
         return try {
