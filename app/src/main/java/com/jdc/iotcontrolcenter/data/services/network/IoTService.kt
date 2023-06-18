@@ -23,9 +23,9 @@ class IoTService @Inject constructor() {
         }
     }
 
-    suspend fun findLatestDHT11Data(): DHT11Data {
+    suspend fun findLatestDHT11Data(token: String): DHT11Data {
         return withContext(Dispatchers.IO) {
-            val response = retrofitService.getLastDHT11Data()
+            val response = retrofitService.getLastDHT11Data(token)
             if (response.isSuccessful) {
                 response.body()!!
             } else {
@@ -34,10 +34,10 @@ class IoTService @Inject constructor() {
         }
     }
 
-    suspend fun findAllDHT11Records(): List<DHT11Data> {
+    suspend fun findAllDHT11Records(token: String): List<DHT11Data> {
 
         return withContext(Dispatchers.IO) {
-            val response = retrofitService.listAllDHTData()
+            val response = retrofitService.listAllDHTData(token)
             if (response.isSuccessful) {
                 response.body()!!
             } else {
@@ -46,10 +46,10 @@ class IoTService @Inject constructor() {
         }
     }
 
-    suspend fun deleteDHTRecords(): String? {
+    suspend fun deleteDHTRecords(token: String): String? {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.deleteDHT11Data().body()
+                retrofitService.deleteDHT11Data(token).body()
             }
         } catch (e: IOException) {
             Log.e("deleteDHTRecords", "$e")
@@ -57,10 +57,10 @@ class IoTService @Inject constructor() {
         }
     }
 
-    suspend fun findAllDoors(): List<Door> {
+    suspend fun findAllDoors(token: String): List<Door> {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.findAllDoors().body()!!
+                retrofitService.findAllDoors(token).body()!!
             }
         } catch (e: IOException) {
             Log.e("okhttpFindAllDoors", "$e")
@@ -68,10 +68,10 @@ class IoTService @Inject constructor() {
         }
     }
 
-    suspend fun updateDoor(door: Door): Boolean {
+    suspend fun updateDoor(token: String, door: Door): Boolean {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.updateDoor(door).body()!!
+                retrofitService.updateDoor(token,door).body()!!
             }
         } catch (e: IOException) {
             Log.e("okhttpFindAllDoors", "$e")
@@ -79,10 +79,10 @@ class IoTService @Inject constructor() {
         }
     }
 
-    suspend fun findAllLightbulbs(): List<Lightbulb> {
+    suspend fun findAllLightbulbs(token: String): List<Lightbulb> {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.listLightbulbs().body()!!
+                retrofitService.listLightbulbs(token).body()!!
             }
         } catch (e: IOException) {
             Log.e("okhttpFindAllDoors", "$e")
@@ -90,10 +90,10 @@ class IoTService @Inject constructor() {
         }
     }
 
-    suspend fun updateLightbulb(lightbulb: Lightbulb): Boolean {
+    suspend fun updateLightbulb(token: String, lightbulb: Lightbulb): Boolean {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.updateLightbulbState(lightbulb).body()!!
+                retrofitService.updateLightbulbState(token,lightbulb).body()!!
             }
         } catch (e: IOException) {
             Log.e("okhttpFindAllDoors", "$e")
@@ -101,10 +101,10 @@ class IoTService @Inject constructor() {
         }
     }
 
-    suspend fun findAllAlarms(): List<Alarm> {
+    suspend fun findAllAlarms(token: String): List<Alarm> {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.listAllAlarms().body()!!
+                retrofitService.listAllAlarms(token).body()!!
             }
         } catch (e: IOException) {
             Log.e("okhttpFindAllAlarms", "$e")
@@ -112,10 +112,10 @@ class IoTService @Inject constructor() {
         }
     }
 
-    suspend fun updateAlarm(alarm: Alarm): Boolean {
+    suspend fun updateAlarm(token: String, alarm: Alarm): Boolean {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.updateAlarm(alarm).body()!!
+                retrofitService.updateAlarm(token, alarm).body()!!
             }
         } catch (e: IOException) {
             Log.e("okhttpupdateAlarm", "$e")
@@ -123,10 +123,10 @@ class IoTService @Inject constructor() {
         }
     }
 
-    suspend fun findAllNotifications(): List<Notification> {
+    suspend fun findAllNotifications(token: String): List<Notification> {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.listNotifications().body()!!
+                retrofitService.listNotifications(token).body()!!
             }
         } catch (e: IOException) {
             Log.e("okhttpFindAllNotif", "$e")
@@ -134,10 +134,10 @@ class IoTService @Inject constructor() {
         }
     }
 
-    suspend fun deleteAllNotifications(): Boolean {
+    suspend fun deleteAllNotifications(token: String): Boolean {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.deleteAllNotifications().body()!!
+                retrofitService.deleteAllNotifications(token).body()!!
             }
         } catch (e: IOException) {
             Log.e("okhttdeleteNots", "$e")

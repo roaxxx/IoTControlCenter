@@ -9,7 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import com.jdc.iotcontrolcenter.data.model.RequestLogin
 import com.jdc.iotcontrolcenter.databinding.LoginMainBinding
-import com.jdc.iotcontrolcenter.domain.Login
+import com.jdc.iotcontrolcenter.domain.impl.LoginUseCaseImp
 import com.jdc.iotcontrolcenter.ui.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,28 +24,32 @@ class LoginActivity : AppCompatActivity() {
         binding = LoginMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         loadingDialog = LoadingDialog().createProgressDialog(this)
-
+        onLoginObserve()
         binding.enterButton.setOnClickListener {
             initLogin()
         }
+    }
+
+    private fun onLoginObserve() {
         loginViewModel.responseLoginModel.observe(this, Observer { loginResponse ->
 
             Log.i("loginResponse","La respuesta observada $loginResponse")
-            if(loginResponse == Login.USER_CREDENTIAL_ERROR){
+            if(loginResponse == LoginUseCaseImp.USER_CREDENTIAL_ERROR){
                 SimpleDialog.makeDialog(
                     this,
                     "Error al iniciar sesión",
                     "Usuario i/o contraseña incorrectos"
                 )
-            }else if (loginResponse == Login.SERVER_CONNECTION_ERROR){
+            }else if (loginResponse == LoginUseCaseImp.SERVER_CONNECTION_ERROR){
                 SimpleDialog.makeDialog(
                     this,
                     "Error de conexión",
                     "Ha ocurrido un error al intentar conectar al servidor, por favor, intentelo más tarde"
                 )
             }else{
+                val intent = Intent(this@LoginActivity, HomeActivity::class.java)
                 intent.putExtra("userName",loginResponse)
-                this@LoginActivity.startActivity(intent)
+                startActivity(intent)
             }
             loadingDialog.hide()
         })
@@ -54,7 +58,7 @@ class LoginActivity : AppCompatActivity() {
     private fun initLogin() {
         val userEmail = binding.userEmail.text.toString()
         val userPassword = binding.userPassword.text.toString()
-        val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+
         loadingDialog.show()
 
         loginViewModel.authenticateOnline(RequestLogin(userEmail,userPassword))

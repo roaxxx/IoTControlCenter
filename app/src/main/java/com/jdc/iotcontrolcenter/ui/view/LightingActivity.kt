@@ -17,10 +17,8 @@ import com.jdc.iotcontrolcenter.R
 import com.jdc.iotcontrolcenter.data.model.Lightbulb
 import com.jdc.iotcontrolcenter.databinding.ActivityLightingBinding
 import com.jdc.iotcontrolcenter.databinding.ColorPickerBinding
-import com.jdc.iotcontrolcenter.domain.LightbulbManager
 import com.jdc.iotcontrolcenter.ui.view.adapters.LightBulbRecyclerViewAdapter
 import com.jdc.iotcontrolcenter.ui.viewmodel.LightbulbViewModel
-import dagger.hilt.EntryPoint
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

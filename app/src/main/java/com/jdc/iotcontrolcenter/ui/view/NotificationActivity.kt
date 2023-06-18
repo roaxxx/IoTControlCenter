@@ -5,16 +5,12 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jdc.iotcontrolcenter.data.model.Notification
 import com.jdc.iotcontrolcenter.databinding.ActivityNotificationBinding
-import com.jdc.iotcontrolcenter.domain.NotificationManager
 import com.jdc.iotcontrolcenter.ui.view.adapters.NotificationRecyclerViewAdapter
 import com.jdc.iotcontrolcenter.ui.viewmodel.NotificationViewModel
-import dagger.hilt.EntryPoint
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class NotificationActivity : AppCompatActivity() {

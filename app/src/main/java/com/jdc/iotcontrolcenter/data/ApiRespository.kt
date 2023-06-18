@@ -10,46 +10,46 @@ class ApiRespository @Inject constructor(private val ioTService : IoTService){
         return ioTService.loginInApi(requestLogin)
     }
 
-    suspend fun findLatestDHT11Data(): DHT11Data{
-        return ioTService.findLatestDHT11Data()
+    suspend fun findLatestDHT11Data(token: String): DHT11Data{
+        return ioTService.findLatestDHT11Data(token)
     }
 
-    suspend fun findAllDHT11Records(): List<DHT11Data>{
-        return ioTService.findAllDHT11Records()
+    suspend fun findAllDHT11Records(token: String): List<DHT11Data>{
+        return ioTService.findAllDHT11Records(token)
     }
 
-    suspend fun deleteDHT11Records(): String? {
-        return ioTService.deleteDHTRecords()
+    suspend fun deleteDHT11Records(token: String): String? {
+        return ioTService.deleteDHTRecords(token)
     }
 
-    suspend fun findAllDoors(): List<Door>{
-        return ioTService.findAllDoors()
+    suspend fun findAllDoors(token: String): List<Door>{
+        return ioTService.findAllDoors(token)
     }
 
-    suspend fun updateDoor(door: Door): Boolean{
-        return ioTService.updateDoor(door)
+    suspend fun updateDoor(token: String, door: Door): Boolean{
+        return ioTService.updateDoor(token,door)
     }
 
-    suspend fun listAllLightbulbs():List<Lightbulb>{
-        return ioTService.findAllLightbulbs()
+    suspend fun listAllLightbulbs(token: String):List<Lightbulb>{
+        return ioTService.findAllLightbulbs(token)
     }
 
-    suspend fun updateLightbulb(lightbulb: Lightbulb):Boolean{
-        return ioTService.updateLightbulb(lightbulb)
+    suspend fun updateLightbulb(token: String, lightbulb: Lightbulb):Boolean{
+        return ioTService.updateLightbulb(token,lightbulb)
     }
 
-    suspend fun listAllAlarms():List<Alarm>{
-        return ioTService.findAllAlarms()
+    suspend fun listAllAlarms(token: String):List<Alarm>{
+        return ioTService.findAllAlarms(token)
     }
 
-    suspend fun updateAlarm(alarm: Alarm):Boolean{
-        return ioTService.updateAlarm(alarm)
+    suspend fun updateAlarm(token: String, alarm: Alarm):Boolean{
+        return ioTService.updateAlarm(token,alarm)
     }
-    suspend fun listAllNotifiactions():List<Notification>{
-        return ioTService.findAllNotifications()
+    suspend fun listAllNotifiactions(token: String):List<Notification>{
+        return ioTService.findAllNotifications(token)
     }
 
-    suspend fun deleteAllNotifications(): Boolean{
-        return ioTService.deleteAllNotifications()
+    suspend fun deleteAllNotifications(token: String): Boolean{
+        return ioTService.deleteAllNotifications(token)
     }
 }

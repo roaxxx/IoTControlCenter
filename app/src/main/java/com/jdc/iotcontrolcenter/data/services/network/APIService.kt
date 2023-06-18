@@ -5,46 +5,45 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface APIService {
-
-    @POST("authenticateUser")
+    @POST("login")
     suspend fun login(@Body requestLogin: RequestLogin): Response<String?>
 
     @GET("dhtSensor/getLatest")
-    suspend fun getLastDHT11Data():Response<DHT11Data>
+    suspend fun getLastDHT11Data(@Header("Authorization") token: String):Response<DHT11Data>
 
     @GET("dhtSensor/listDHT11Data")
-    suspend fun listAllDHTData(): Response<List<DHT11Data>>
+    suspend fun listAllDHTData(@Header("Authorization") token: String): Response<List<DHT11Data>>
 
     @GET("dhtSensor/delete")
-    suspend fun deleteDHT11Data(): Response<String?>
+    suspend fun deleteDHT11Data(@Header("Authorization") token: String): Response<String?>
 
     @GET("door/listDoors")
-    suspend fun findAllDoors(): Response<List<Door>>
+    suspend fun findAllDoors(@Header("Authorization") token: String): Response<List<Door>>
 
     @POST("door/updateDoor")
-    suspend fun updateDoor(@Body door: Door): Response<Boolean>
+    suspend fun updateDoor(@Header("Authorization") token: String, @Body door: Door): Response<Boolean>
 
     @GET("alarm/findAlarms")
-    suspend fun findAllAlarms():Response<List<Alarm>>
+    suspend fun findAllAlarms(@Header("Authorization") token: String):Response<List<Alarm>>
 
     @POST("alarm/UpdateAlarm")
-    suspend fun updateAlarm(): Response<Boolean>
+    suspend fun updateAlarm(@Header("Authorization") token: String): Response<Boolean>
 
     @GET("lightbulb/list")
-    suspend fun listLightbulbs(): Response<List<Lightbulb>>
+    suspend fun listLightbulbs(@Header("Authorization") token: String): Response<List<Lightbulb>>
 
     @POST("lightbulb/update")
-    suspend fun updateLightbulbState(@Body lightbulb: Lightbulb): Response<Boolean>
+    suspend fun updateLightbulbState(@Header("Authorization") token: String,@Body lightbulb: Lightbulb): Response<Boolean>
 
     @GET("alarm/findAlarms")
-    suspend fun listAllAlarms(): Response<List<Alarm>>
+    suspend fun listAllAlarms(@Header("Authorization") token: String): Response<List<Alarm>>
 
     @POST("alarm/UpdateAlarm")
-    suspend fun updateAlarm(@Body alarm: Alarm): Response<Boolean>
+    suspend fun updateAlarm(@Header("Authorization") token: String,@Body alarm: Alarm): Response<Boolean>
 
     @GET("notifications/listNotifications")
-    suspend fun listNotifications(): Response<List<Notification>>
+    suspend fun listNotifications(@Header("Authorization") token: String,): Response<List<Notification>>
 
     @GET("notifications/deleteAll")
-    suspend fun deleteAllNotifications(): Response<Boolean>
+    suspend fun deleteAllNotifications(@Header("Authorization") token: String): Response<Boolean>
 }
