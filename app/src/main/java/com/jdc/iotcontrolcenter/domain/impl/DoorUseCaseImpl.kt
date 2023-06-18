@@ -11,6 +11,10 @@ class DoorUseCaseImpl @Inject constructor(
     private val sessionUseCaseImpl: SessionUseCaseImpl
 ) : DoorUseCase {
 
+    /**
+     * Retrieves all doors.
+     * @return a mutable list of doors, or an empty list if there is any error.
+     */
     override suspend fun getAllDoors(): MutableList<Door> {
         return try {
             apiRespository.findAllDoors(sessionUseCaseImpl.getToken()).toMutableList()
@@ -19,6 +23,11 @@ class DoorUseCaseImpl @Inject constructor(
         }
     }
 
+    /**
+     * Updates the state of a door.
+     * @param door the door to update.
+     * @return `true` if the update was successful, or `false` in case of error.
+     */
     override suspend fun updateDoorstate(door: Door): Boolean {
         return try {
             apiRespository.updateDoor(sessionUseCaseImpl.getToken(),door)

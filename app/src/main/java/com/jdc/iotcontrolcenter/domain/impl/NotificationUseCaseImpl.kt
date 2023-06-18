@@ -12,6 +12,10 @@ class NotificationUseCaseImpl @Inject constructor(
     private val sessionUseCaseImpl: SessionUseCaseImpl
 ) : NotificationUseCase {
 
+    /**
+     * Retrieves all notifications.
+     * @return A mutable list of notifications.
+     */
     override suspend fun getAllNotifications(): MutableList<Notification> {
         return try {
             apiRepository.listAllNotifiactions(sessionUseCaseImpl.getToken()).toMutableList()
@@ -21,6 +25,10 @@ class NotificationUseCaseImpl @Inject constructor(
         }
     }
 
+    /**
+     * Deletes all notifications.
+     * @return True if the deletion was successful, false otherwise.
+     */
     override suspend fun deleteAllNotifications(): Boolean {
         return try {
             apiRepository.deleteAllNotifications(sessionUseCaseImpl.getToken())

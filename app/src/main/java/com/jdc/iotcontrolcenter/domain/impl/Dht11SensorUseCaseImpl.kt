@@ -12,6 +12,10 @@ class Dht11SensorUseCaseImpl @Inject constructor(
     private val sessionUseCaseImpl: SessionUseCaseImpl
 ) : Dht11SensorUseCase {
 
+    /**
+     * Retrieves the latest data from the DHT11 sensor.
+     * @return The latest DHT11Data object, or null if an error occurs.
+     */
     override suspend fun getSensorLatestData(): DHT11Data? {
         try {
             return apiRespository.findLatestDHT11Data(sessionUseCaseImpl.getToken())
@@ -21,6 +25,10 @@ class Dht11SensorUseCaseImpl @Inject constructor(
         }
     }
 
+    /**
+     * Retrieves all DHT11 records.
+     * @return A mutable list of DHT11Data objects representing all records, or an empty list if an error occurs.
+     */
     override suspend fun getAllDHTRecords(): MutableList<DHT11Data> {
         return try {
             return apiRespository.findAllDHT11Records(sessionUseCaseImpl.getToken()).toMutableList()
@@ -30,8 +38,14 @@ class Dht11SensorUseCaseImpl @Inject constructor(
         }
     }
 
+    /**
+     * Clear all record for DHT11 Sensor online
+     */
     override suspend fun clearRecords() {
-        apiRespository.deleteDHT11Records(sessionUseCaseImpl.getToken())
+        try {
+            apiRespository.deleteDHT11Records(sessionUseCaseImpl.getToken())
+        } catch (e: IOException) {
+            Log.e("clearRecords", " $e")
+        }
     }
-
 }

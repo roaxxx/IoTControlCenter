@@ -12,6 +12,10 @@ class LightbulbUseCaseImpl @Inject constructor(
     private val sessionUseCaseImpl: SessionUseCaseImpl
 ) : LightbulbUseCase {
 
+    /**
+     * Lists all available lightbulbs.
+     * @return a mutable list of lightbulbs, or an empty list if an error occurs.
+     */
     override suspend fun listLightbulbs(): MutableList<Lightbulb> {
         return try {
             apiRepository.listAllLightbulbs(sessionUseCaseImpl.getToken()).toMutableList()
@@ -21,6 +25,11 @@ class LightbulbUseCaseImpl @Inject constructor(
         }
     }
 
+    /**
+     * Updates the state of a lightbulb.
+     * @param lightbulb the lightbulb to update.
+     * @return `true` if the update was successful, `false` if an error occurred.
+     */
     override suspend fun updateLightbulb(lightbulb: Lightbulb): Boolean {
         return try {
             apiRepository.updateLightbulb(sessionUseCaseImpl.getToken(),lightbulb)

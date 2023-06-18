@@ -12,6 +12,10 @@ class AlarmUseCaseImpl @Inject constructor(
     private val sessionUseCaseImpl: SessionUseCaseImpl
 ) : AlarmUseCase {
 
+    /**
+     * Retrieves all alarms.
+     * @return A mutable list of Alarm objects containing all alarms.
+     */
     override suspend fun getAllAlarms(): MutableList<Alarm> {
         return try {
             apiRepository.listAllAlarms(sessionUseCaseImpl.getToken()).toMutableList()
@@ -21,6 +25,11 @@ class AlarmUseCaseImpl @Inject constructor(
         }
     }
 
+    /**
+     * Updates the given alarm.
+     * @param alarm The Alarm object to update.
+     * @return A boolean value indicating whether the update was successful or not.
+     */
     override suspend fun updateAlarm(alarm: Alarm): Boolean {
         return try {
             apiRepository.updateAlarm(sessionUseCaseImpl.getToken(),alarm)

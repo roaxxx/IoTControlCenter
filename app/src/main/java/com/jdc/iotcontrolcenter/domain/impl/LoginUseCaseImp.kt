@@ -16,6 +16,12 @@ class LoginUseCaseImp @Inject constructor(
         val SERVER_CONNECTION_ERROR = "SERVER_CONN_ERR"
     }
 
+    /**
+     * Performs user login.
+     * @param requestLogin the user login data.
+     * @return the authentication token if the login is successful, otherwise
+     * returns an error message.
+     */
     override suspend operator fun invoke(requestLogin: RequestLogin): String {
         return try {
             val apiResponse = apiRespository.loginInApi(requestLogin)
