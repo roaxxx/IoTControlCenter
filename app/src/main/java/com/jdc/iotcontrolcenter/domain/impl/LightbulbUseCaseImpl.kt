@@ -1,41 +1,33 @@
 package com.jdc.iotcontrolcenter.domain.impl
 
-import android.util.Log
-import com.jdc.iotcontrolcenter.data.ApiRespository
+import com.jdc.iotcontrolcenter.data.ApiRepository
 import com.jdc.iotcontrolcenter.data.model.Lightbulb
 import com.jdc.iotcontrolcenter.domain.LightbulbUseCase
-import okio.IOException
+import com.jdc.iotcontrolcenter.domain.SessionUseCase
 import javax.inject.Inject
+import com.jdc.iotcontrolcenter.data.Result
 
 class LightbulbUseCaseImpl @Inject constructor(
-    private val apiRepository: ApiRespository,
-    private val sessionUseCaseImpl: SessionUseCaseImpl
+    private val apiRepository: ApiRepository,
+    private val sessionUseCase: SessionUseCase
 ) : LightbulbUseCase {
 
     /**
      * Lists all available lightbulbs.
      * @return a mutable list of lightbulbs, or an empty list if an error occurs.
      */
-    override suspend fun listLightbulbs(): MutableList<Lightbulb> {
-        return try {
-            apiRepository.listAllLightbulbs(sessionUseCaseImpl.getToken()).toMutableList()
-        } catch (e: IOException) {
-            Log.e("okhttplistlightbubls", "$e")
-            emptyList<Lightbulb>().toMutableList()
-        }
+    override suspend fun listLightbulbs(): Result<List<Lightbulb>> {
+        return  apiRepository.listAllLightbulbs(sessionUseCase.getToken())
     }
 
     /**
      * Updates the state of a lightbulb.
-     * @param lightbulb the lightbulb to update.
-     * @return `true` if the update was successful, `false` if an error occurred.
+     * @param idLighbulb id of lightbulb to update
+     * @param lightbulbValue new value of lightbulb
+     * @return Lightbulb updated
      */
-    override suspend fun updateLightbulb(lightbulb: Lightbulb): Boolean {
-        return try {
-            apiRepository.updateLightbulb(sessionUseCaseImpl.getToken(),lightbulb)
-        } catch (e: IOException) {
-            Log.e("okhttpupdatelightbubls", "$e")
-            return false
-        }
+    override suspend fun updateLightbulb(idLighbulb: Int, lightbulbValue: String): Result<Lightbulb> {
+        return apiRepository.updateLightbulb(sessionUseCase.getToken(), idLighbulb, lightbulbValue)
+
     }
 }

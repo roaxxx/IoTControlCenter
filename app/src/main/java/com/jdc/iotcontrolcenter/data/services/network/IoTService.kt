@@ -1,147 +1,198 @@
 package com.jdc.iotcontrolcenter.data.services.network
 
-import android.util.Log
+import com.jdc.iotcontrolcenter.data.ApiRepository
+import com.jdc.iotcontrolcenter.data.Result
 import com.jdc.iotcontrolcenter.data.model.*
 import com.jdc.iotcontrolcenter.di.NetworkModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okio.IOException
+import java.net.ConnectException
 import javax.inject.Inject
 
-class IoTService @Inject constructor() {
+class IoTService @Inject constructor(): ApiRepository {
 
-    private val retrofitService = NetworkModule.buildService(APIService::class.java)
+    private val retrofitService = NetworkModule.providesIoTApiClient()
 
-    suspend fun loginInApi(requestLogin: RequestLogin): String? {
-        return withContext(Dispatchers.IO) {
-            val response = retrofitService.login(requestLogin)
-            if (response.isSuccessful) {
-                response.body()
-            } else {
-                null
+    override suspend fun loginInApi(requestLogin: RequestLogin): Result<String> {
+        return  try {
+            withContext(Dispatchers.IO) {
+                val response = retrofitService.login(requestLogin)
+                if(response.isSuccessful ){
+                    Result.Success(response.body()!!)
+                }else{
+                    Result.Error(IllegalStateException("ERR_ON_RESPONSE${response.code()},${response.errorBody()}"))
+                }
             }
+        } catch (e: IOException){
+            Result.Error(IOException("SERVER_CONN_ERR"))
+        }  catch (ex: ConnectException){
+        Result.Error(IOException("SERVER_CONN_ERR $ex"))
         }
     }
 
-    suspend fun findLatestDHT11Data(token: String): DHT11Data {
-        return withContext(Dispatchers.IO) {
-            val response = retrofitService.getLastDHT11Data(token)
-            if (response.isSuccessful) {
-                response.body()!!
-            } else {
-                DHT11Data(0, 0, 0, "MMM, d Y", "hh:mm:ss")
-            }
-        }
-    }
-
-    suspend fun findAllDHT11Records(token: String): List<DHT11Data> {
-
-        return withContext(Dispatchers.IO) {
-            val response = retrofitService.listAllDHTData(token)
-            if (response.isSuccessful) {
-                response.body()!!
-            } else {
-                emptyList()
-            }
-        }
-    }
-
-    suspend fun deleteDHTRecords(token: String): String? {
+    override suspend fun getIotInformation(token: String): Result<IoTInformationDTO> {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.deleteDHT11Data(token).body()
+                val response = retrofitService.getIoTInformation(token)
+                if(response.isSuccessful ){
+                    Result.Success(response.body()!!)
+                }else{
+                    Result.Error(IllegalStateException("ERR_ON_RESPONSE${response.code()},${response.errorBody()}"))
+                }
             }
-        } catch (e: IOException) {
-            Log.e("deleteDHTRecords", "$e")
-            return null
+        } catch (e: IOException){
+            Result.Error(IOException("1 $e"))
+        } catch (ex: ConnectException){
+            Result.Error(IOException("2 $ex"))
         }
     }
 
-    suspend fun findAllDoors(token: String): List<Door> {
+    override suspend fun findAllDHT11Records(token: String): Result<List<DHT11Data>> {
+
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.findAllDoors(token).body()!!
+                val response = retrofitService.getAllDHT11Data(token)
+                if(response.isSuccessful ){
+                    Result.Success(response.body() ?: emptyList())
+                }else{
+                    Result.Error(IllegalStateException("ERR_ON_RESPONSE${response.code()},${response.errorBody()}"))
+                }
             }
-        } catch (e: IOException) {
-            Log.e("okhttpFindAllDoors", "$e")
-            emptyList()
+        } catch (e: IOException){
+            Result.Error(IOException("SERVER_CONN_ERR"))
         }
     }
 
-    suspend fun updateDoor(token: String, door: Door): Boolean {
+    override suspend fun deleteDHT11Records(token: String): Result<Boolean> {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.updateDoor(token,door).body()!!
+                val response = retrofitService.deleteDHT11Data(token)
+                if(response.isSuccessful ){
+                    Result.Success(response.body()!!)
+                }else{
+                    Result.Error(IllegalStateException("ERR_ON_RESPONSE${response.code()},${response.errorBody()}"))
+                }
             }
-        } catch (e: IOException) {
-            Log.e("okhttpFindAllDoors", "$e")
-            false
+        } catch (e: IOException){
+            Result.Error(IOException("SERVER_CONN_ERR"))
         }
     }
 
-    suspend fun findAllLightbulbs(token: String): List<Lightbulb> {
+
+    override suspend fun updateDoor(token: String, idDoor: Int, doorState: String): Result<Door> {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.listLightbulbs(token).body()!!
+                val response = retrofitService.updateDoor(token, idDoor,doorState)
+                if(response.isSuccessful ){
+                    Result.Success(response.body()!!)
+                }else{
+                    Result.Error(IllegalStateException("ERR_ON_RESPONSE${response.code()},${response.errorBody()}"))
+                }
             }
-        } catch (e: IOException) {
-            Log.e("okhttpFindAllDoors", "$e")
-            emptyList()
+        } catch (e: IOException){
+            Result.Error(IOException("SERVER_CONN_ERR"))
         }
     }
 
-    suspend fun updateLightbulb(token: String, lightbulb: Lightbulb): Boolean {
+    override suspend fun listAllLightbulbs(token: String): Result<List<Lightbulb>> {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.updateLightbulbState(token,lightbulb).body()!!
+                val response = retrofitService.listLightbulbs(token)
+                if(response.isSuccessful ){
+                    Result.Success(response.body()!!)
+                }else{
+                    Result.Error(IllegalStateException("ERR_ON_RESPONSE${response.code()},${response.errorBody()}"))
+                }
             }
-        } catch (e: IOException) {
-            Log.e("okhttpFindAllDoors", "$e")
-            false
+        } catch (e: IOException){
+            Result.Error(IOException("SERVER_CONN_ERR1"))
+        } catch (ex: ConnectException){
+            Result.Error(IOException("SERVER_CONN_ERR2 $ex"))
         }
     }
 
-    suspend fun findAllAlarms(token: String): List<Alarm> {
+    override suspend fun updateLightbulb(
+        token: String,
+        idLightbulb: Int,
+        lightbulbValue: String
+    ): Result<Lightbulb> {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.listAllAlarms(token).body()!!
+                val response = retrofitService.updateLightbulbState(token, idLightbulb, lightbulbValue)
+                if(response.isSuccessful ){
+                    Result.Success(response.body()!!)
+                }else{
+                    Result.Error(IllegalStateException("ERR_ON_RESPONSE${response.code()},${response.errorBody()}"))
+                }
             }
-        } catch (e: IOException) {
-            Log.e("okhttpFindAllAlarms", "$e")
-            emptyList()
+        } catch (e: IOException){
+            Result.Error(IOException("SERVER_CONN_ERR"))
         }
     }
 
-    suspend fun updateAlarm(token: String, alarm: Alarm): Boolean {
+    override suspend fun updateAlarm(
+        token: String,
+        idAlarm: String,
+        alarmConditionsDTO: AlarmConditionsDTO
+    ): Result<Alarm> {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.updateAlarm(token, alarm).body()!!
+                val response = retrofitService.updateAlarm(token, idAlarm, alarmConditionsDTO)
+                if(response.isSuccessful ){
+                    Result.Success(response.body()!!)
+                }else{
+                    Result.Error(IllegalStateException("ERR_ON_RESPONSE${response.code()},${response.errorBody()}"))
+                }
             }
-        } catch (e: IOException) {
-            Log.e("okhttpupdateAlarm", "$e")
-            false
+        } catch (e: IOException){
+            Result.Error(IOException("SERVER_CONN_ERR"))
         }
     }
 
-    suspend fun findAllNotifications(token: String): List<Notification> {
+    override suspend fun listAllNotifiactions(token: String): Result<List<Notification>> {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.listNotifications(token).body()!!
+                val response = retrofitService.listNotifications(token)
+                if(response.isSuccessful ){
+                    Result.Success(response.body()!!)
+                }else{
+                    Result.Error(IllegalStateException("ERR_ON_RESPONSE${response.code()},${response.errorBody()}"))
+                }
             }
-        } catch (e: IOException) {
-            Log.e("okhttpFindAllNotif", "$e")
-            emptyList()
+        } catch (e: IOException){
+            Result.Error(IOException("SERVER_CONN_ERR"))
         }
     }
 
-    suspend fun deleteAllNotifications(token: String): Boolean {
+    override suspend fun deleteAllNotifications(token: String): Result<Boolean> {
         return try {
             withContext(Dispatchers.IO) {
-                retrofitService.deleteAllNotifications(token).body()!!
+                val response = retrofitService.deleteAllNotifications(token)
+                if(response.isSuccessful ){
+                    Result.Success(response.body()!!)
+                }else{
+                    Result.Error(IllegalStateException("ERR_ON_RESPONSE${response.code()},${response.errorBody()}"))
+                }
             }
-        } catch (e: IOException) {
-            Log.e("okhttdeleteNots", "$e")
-            false
+        } catch (e: IOException){
+            Result.Error(IOException("SERVER_CONN_ERR"))
         }
     }
+
+    override suspend fun getCurrentUser(token: String): Result<String> {
+        return try {
+            withContext(Dispatchers.IO) {
+                val response = retrofitService.getCurrentUser(token)
+                if(response.isSuccessful ){
+                    Result.Success(response.body()!!)
+                }else{
+                    Result.Error(IllegalStateException("ERR_ON_RESPONSE${response.code()},${response.errorBody()}"))
+                }
+            }
+        } catch (e: IOException){
+            Result.Error(IOException("SERVER_CONN_ERR"))
+        }
+    }
+
 }

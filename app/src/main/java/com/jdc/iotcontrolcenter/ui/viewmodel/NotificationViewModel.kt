@@ -8,21 +8,22 @@ import com.jdc.iotcontrolcenter.domain.impl.NotificationUseCaseImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.jdc.iotcontrolcenter.data.Result
 
 @HiltViewModel
 class NotificationViewModel @Inject constructor(private val notificationUseCaseImpl: NotificationUseCaseImpl): ViewModel(){
-    val noticationLisObservable = MutableLiveData<MutableList<Notification>>()
-    val isDeleteNotificationsObservable = MutableLiveData<Boolean>()
+    val notificationsModel = MutableLiveData<Result<List<Notification>>>()
+    val isClearNotificationsModel = MutableLiveData<Result<Boolean>>()
 
     fun getAllNotifications(){
         viewModelScope.launch {
-            noticationLisObservable.postValue(notificationUseCaseImpl.getAllNotifications())
+            notificationsModel.postValue(notificationUseCaseImpl.getAllNotifications())
         }
     }
 
     fun deleteAllNotifications(){
         viewModelScope.launch {
-            isDeleteNotificationsObservable.postValue(notificationUseCaseImpl.deleteAllNotifications())
+            isClearNotificationsModel.postValue(notificationUseCaseImpl.deleteAllNotifications())
         }
     }
 }

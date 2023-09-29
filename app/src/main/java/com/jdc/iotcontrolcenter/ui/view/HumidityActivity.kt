@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import com.jdc.iotcontrolcenter.R
+import com.jdc.iotcontrolcenter.data.Result
 import com.jdc.iotcontrolcenter.data.model.DHT11Data
 import com.jdc.iotcontrolcenter.ui.viewmodel.Dht11SensorViewModel
 import com.jjoe64.graphview.GraphView
@@ -62,11 +63,16 @@ class HumidityActivity : AppCompatActivity() {
     }
 
     private fun requestApiForDHTData() {
-        dht11SensorViewModel.dhtRecordListObservable.observe(this, Observer { dhtRecordList ->
-            dataList.clear()
-            dataList.addAll(dhtRecordList)
-            updateGraphView()
-            loadingDialog.hide()
+        dht11SensorViewModel.dhtRecordModel.observe(this, Observer { dhtRecordsResult ->
+            when(dhtRecordsResult){
+                is Result.Success -> {
+                    dataList.clear()
+                    dataList.addAll(dhtRecordsResult.data)
+                    updateGraphView()
+                    loadingDialog.hide()
+                }
+                is Result.Error -> TODO()
+            }
         })
     }
 

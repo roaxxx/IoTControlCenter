@@ -1,12 +1,15 @@
 <resources>
     <string name="app_name">IoTControlCenter</string>
     <string name="log_in">Iniciar sesión</string>
-    <string name="email">Correo electrónico</string>
-    <string name="enter_email">Ingrese su correo</string>
+    <string name="email">Usuario o correo electrónico</string>
+    <string name="enter_email">Ingrese su correo o usuario</string>
     <string name="password">Contraseña</string>
-    <string name="enter_your_password">Ingrese su contraseña</string>
+    <string name="enter_your_password">Digite su contraseña</string>
     <string name="enter">Ingresar</string>
     <string name="home_token">Inicio</string>
+    <string name="conn_err" translatable="false">A ocurrido un error a intentar comunicarse con el servidor.
+    Intentelo nuevamente más tarde.</string>
+    <string name="do_again">Intentar nuevamente</string>
     <string-array name="color_list">
         <item>Azul</item>
         <item>Rojo</item>

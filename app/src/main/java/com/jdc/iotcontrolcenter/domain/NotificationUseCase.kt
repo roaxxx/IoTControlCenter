@@ -1,10 +1,11 @@
 package com.jdc.iotcontrolcenter.domain
 
 import com.jdc.iotcontrolcenter.data.model.Notification
+import com.jdc.iotcontrolcenter.data.Result
 
 interface NotificationUseCase {
 
-    suspend fun getAllNotifications(): MutableList<Notification>
+    suspend fun getAllNotifications(): Result<List<Notification>>
 
-    suspend fun deleteAllNotifications(): Boolean
+    suspend fun deleteAllNotifications(): Result<Boolean>
 }

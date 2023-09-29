@@ -1,40 +1,32 @@
 package com.jdc.iotcontrolcenter.domain.impl
 
 import android.util.Log
-import com.jdc.iotcontrolcenter.data.ApiRespository
+import com.jdc.iotcontrolcenter.data.ApiRepository
 import com.jdc.iotcontrolcenter.data.model.Notification
 import com.jdc.iotcontrolcenter.domain.NotificationUseCase
+import com.jdc.iotcontrolcenter.domain.SessionUseCase
 import okio.IOException
 import javax.inject.Inject
+import com.jdc.iotcontrolcenter.data.Result
 
 class NotificationUseCaseImpl @Inject constructor(
-    private val apiRepository: ApiRespository,
-    private val sessionUseCaseImpl: SessionUseCaseImpl
+    private val apiRepository: ApiRepository,
+    private val sessionUseCase: SessionUseCase
 ) : NotificationUseCase {
 
     /**
      * Retrieves all notifications.
      * @return A mutable list of notifications.
      */
-    override suspend fun getAllNotifications(): MutableList<Notification> {
-        return try {
-            apiRepository.listAllNotifiactions(sessionUseCaseImpl.getToken()).toMutableList()
-        } catch (e: IOException) {
-            Log.e("httpGetNots", e.toString())
-            emptyList<Notification>().toMutableList()
-        }
+    override suspend fun getAllNotifications(): Result<List<Notification>> {
+        return  apiRepository.listAllNotifiactions(sessionUseCase.getToken())
     }
 
     /**
      * Deletes all notifications.
      * @return True if the deletion was successful, false otherwise.
      */
-    override suspend fun deleteAllNotifications(): Boolean {
-        return try {
-            apiRepository.deleteAllNotifications(sessionUseCaseImpl.getToken())
-        } catch (e: IOException) {
-            Log.e("httpGetNots", e.toString())
-            false
-        }
+    override suspend fun deleteAllNotifications(): Result<Boolean> {
+        return apiRepository.deleteAllNotifications(sessionUseCase.getToken())
     }
 }

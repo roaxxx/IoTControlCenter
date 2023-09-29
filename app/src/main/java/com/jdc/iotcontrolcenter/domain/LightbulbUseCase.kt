@@ -1,10 +1,11 @@
 package com.jdc.iotcontrolcenter.domain
 
 import com.jdc.iotcontrolcenter.data.model.Lightbulb
+import com.jdc.iotcontrolcenter.data.Result
 
 interface LightbulbUseCase {
 
-    suspend fun listLightbulbs(): MutableList<Lightbulb>
+    suspend fun listLightbulbs(): Result<List<Lightbulb>>
 
-    suspend fun updateLightbulb(lightbulb: Lightbulb): Boolean
+    suspend fun updateLightbulb(idLighbulb: Int, lightbulbValue: String): Result<Lightbulb>
 }

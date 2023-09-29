@@ -8,17 +8,15 @@ import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import com.jdc.iotcontrolcenter.R
+import com.jdc.iotcontrolcenter.data.Result
 import com.jdc.iotcontrolcenter.data.model.DHT11Data
 import com.jdc.iotcontrolcenter.ui.viewmodel.Dht11SensorViewModel
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.helper.StaticLabelsFormatter
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
-import dagger.hilt.EntryPoint
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TemperatureActivity : AppCompatActivity() {
@@ -68,11 +66,16 @@ class TemperatureActivity : AppCompatActivity() {
     }
 
     private fun requestApiForDHTData() {
-        dht11SensorViewModel.dhtRecordListObservable.observe(this, Observer { dhtSensorRecords ->
-            dataList.clear()
-            dataList.addAll(dhtSensorRecords)
-            updateGraphView()
-            loadingDialog.hide()
+        dht11SensorViewModel.dhtRecordModel.observe(this, Observer { dhtSensorRecordResult ->
+            when(dhtSensorRecordResult){
+                is Result.Success -> {
+                    dataList.clear()
+                    dataList.addAll(dhtSensorRecordResult.data)
+                    updateGraphView()
+                    loadingDialog.hide()
+                }
+                is Result.Error -> TODO()
+            }
         })
     }
 

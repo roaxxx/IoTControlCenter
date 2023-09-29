@@ -4,27 +4,22 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jdc.iotcontrolcenter.data.model.Door
-import com.jdc.iotcontrolcenter.domain.impl.DoorUseCaseImpl
+import com.jdc.iotcontrolcenter.domain.DoorUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.jdc.iotcontrolcenter.data.Result
 
 @HiltViewModel
-class DoorViewModel @Inject constructor(private val doorManager: DoorUseCaseImpl): ViewModel() {
+class DoorViewModel @Inject constructor(
+    private val doorManager: DoorUseCase
+): ViewModel() {
 
-    val doorListObservable = MutableLiveData<MutableList<Door>>()
-    val isUpdateDoorObservable = MutableLiveData<Boolean>()
+    val isUpdateDoorObservable = MutableLiveData<Result<Door>>()
 
-    fun getAllDoorsOnline() {
+    fun updateDoorOnline(idDoor: Int, newDoorState: String) {
         viewModelScope.launch {
-            doorListObservable.postValue(doorManager.getAllDoors())
-        }
-    }
-
-    fun updateDoorOnline(door: Door) {
-        viewModelScope.launch {
-            isUpdateDoorObservable.postValue(false)
-            isUpdateDoorObservable.postValue(doorManager.updateDoorstate(door))
+            isUpdateDoorObservable.postValue(doorManager.updateDoorstate(idDoor, newDoorState))
         }
     }
 }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:gravity="center_horizontal"
+              android:padding="60dp"
+              app:behavior_peekHeight="0dp"
+              style="?attr/bottomSheetStyle"
+              app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+              android:layout_height="match_parent">
+
+    <ImageView
+            android:id="@+id/errorImage"
+            android:layout_width="match_parent"
+            android:src="@drawable/i404_error_img"
+            android:layout_height="300dp">
+    </ImageView>
+    <TextView
+            android:text="@string/conn_err"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/errorConnTV"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp" android:textAlignment="center"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/dark_blue"
+            android:textAllCaps="false"
+            android:layout_marginTop="15dp"
+            app:cornerRadius="10dp"
+            android:id="@+id/continueBT"
+            android:textSize="16sp"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="30dp"
+            android:text="@string/do_again" android:textColor="@color/white"/>
+</LinearLayout>

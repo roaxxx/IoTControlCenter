@@ -6,6 +6,7 @@ import android.os.Handler
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.jdc.iotcontrolcenter.data.Result
 import com.jdc.iotcontrolcenter.data.model.Notification
 import com.jdc.iotcontrolcenter.databinding.ActivityNotificationBinding
 import com.jdc.iotcontrolcenter.ui.view.adapters.NotificationRecyclerViewAdapter
@@ -45,10 +46,16 @@ class NotificationActivity : AppCompatActivity() {
     }
 
     private fun showNotifications() {
-        notificationViewModel.noticationLisObservable.observe(this, Observer { notifications ->
-            notificationList.clear()
-            notificationList.addAll(notifications)
-            notificationAdapter.notifyDataSetChanged()
+        notificationViewModel.notificationsModel.observe(this, Observer { notificationsResult ->
+            when(notificationsResult){
+                is Result.Success -> {
+                    notificationList.clear()
+                    notificationList.addAll(notificationsResult.data)
+                    notificationAdapter.notifyDataSetChanged()
+                }
+                is Result.Error -> TODO()
+            }
+
         })
     }
 

@@ -5,19 +5,19 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.jdc.iotcontrolcenter.R
-import com.jdc.iotcontrolcenter.data.model.Alarm
-import com.jdc.iotcontrolcenter.data.model.DHT11Data
-import com.jdc.iotcontrolcenter.data.model.Door
+import com.jdc.iotcontrolcenter.data.Result
+import com.jdc.iotcontrolcenter.data.model.*
+import com.jdc.iotcontrolcenter.data.preferences.PreferencesProvider
 import com.jdc.iotcontrolcenter.databinding.ActivityHomeBinding
 import com.jdc.iotcontrolcenter.databinding.FireAlarmSettingsBinding
-import com.jdc.iotcontrolcenter.ui.viewmodel.AlarmViewModel
-import com.jdc.iotcontrolcenter.ui.viewmodel.Dht11SensorViewModel
-import com.jdc.iotcontrolcenter.ui.viewmodel.DoorViewModel
+import com.jdc.iotcontrolcenter.ui.viewmodel.*
 import dagger.hilt.EntryPoint
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -28,14 +28,14 @@ class HomeActivity  : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
 
-    private val dht11SensorViewModel : Dht11SensorViewModel by viewModels()
-    private val doorViewModel : DoorViewModel by viewModels()
-    private val alarmViewModel : AlarmViewModel by viewModels()
+    private lateinit var ioTInfoViewModel: IoTInfoViewModel
+    private val doorViewModel:  DoorViewModel  by viewModels()
+    private val alarmViewModel: AlarmViewModel by viewModels()
+    private val loginViewModel: LoginViewModel by viewModels()
 
-    private var latestDHTData: DHT11Data? = null
     private lateinit var loadingDialog: AlertDialog
-    private val listOfDoors = mutableListOf<Door>()
-    private val alarmList = mutableListOf<Alarm>()
+
+    private lateinit var alarmConditionsDTO : AlarmConditionsDTO
 
     private lateinit var intruderAlarm: Alarm
     private lateinit var fireAlarm: Alarm
@@ -56,85 +56,88 @@ class HomeActivity  : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         loadingDialog = LoadingDialog().createProgressDialog(this)
         loadingDialog.show()
+
+        ioTInfoViewModel = ViewModelProvider(this)
+            .get(IoTInfoViewModel::class.java)
+
         initListeners()
         initObservables()
-
-        val bundle = intent.extras
-        binding.welcomText.text = "Hola, buenos días, " + bundle?.getString("userName")!!
+        loginViewModel.getSessionUser()
         updateData()
     }
 
     private fun updateData() {
-        dht11SensorViewModel.getLastRecord()
-        dht11SensorViewModel.getAllDhtRecordList()
-        doorViewModel.getAllDoorsOnline()
-        alarmViewModel.getAllAlarmsOnline()
+        ioTInfoViewModel.getIoTInformation()
     }
 
     private fun initObservables() {
-        dht11SensorViewModel.dhtSesorLastRecordObservable.observe(this, Observer { dhtLastRecord ->
-            binding.lastTemperatureDate.text = dhtLastRecord.date
-            binding.temperatureValue.text = dhtLastRecord.temperature.toString() + " C°"
+        loginViewModel.usernameObservable.observe(this, Observer { usernameResult ->
+            when(usernameResult){
+                is Result.Success -> binding.welcomText.text = "Hola, buenos días, " + usernameResult.data
+                is Result.Error -> Toast.makeText(this,"${usernameResult.exception}", Toast.LENGTH_LONG).show()
+            }
 
-            binding.lastHumidityDate.text = dhtLastRecord.date
-            binding.humidityPorcentage.text = dhtLastRecord.humidity.toString() + " %"
         })
 
-        doorViewModel.doorListObservable.observe(this, Observer { doorList->
-            listOfDoors.clear()
-            listOfDoors.addAll(doorList)
-            if(listOfDoors.size>0 && listOfDoors[0].idDoor==1){
-                mainDoor = listOfDoors[0]
-                garageDoor = listOfDoors[1]
-            }else {
-                mainDoor = listOfDoors[1]
-                garageDoor = listOfDoors[0]
+        ioTInfoViewModel.ioTInfoObservable.observe(this, Observer { ioTInfoResult ->
+
+            when(ioTInfoResult){
+                is Result.Success -> onSuccessIotInformation(ioTInfoResult.data)
+                is Result.Error -> Toast.makeText(this,"${ioTInfoResult.exception}", Toast.LENGTH_LONG).show()
             }
 
-            mainDoor.let {
-                binding.doorLastUpdate.text = mainDoor.updateDate
-                if (mainDoor.doorState == "open") {
-                    binding.doorState.text = "Puerta principal: Abierta"
-                    binding.changeDoorState.text = "Cerrar"
-                    binding.doorImg.setImageResource(R.drawable.ic_open_door)
-                } else {
-                    binding.doorState.text = "Puerta principal: Cerrada"
-                    binding.changeDoorState.text = "Abir"
-                    binding.doorImg.setImageResource(R.drawable.ic_close_door)
-                }
-            }
-            garageDoor.let {
-                binding.garageLastUpdate.text = garageDoor.updateDate
-                if (garageDoor.doorState=="open"){
-                    binding.changeGarageDoorState.text = "Cerrar"
-                }else{
-                    binding.changeGarageDoorState.text = "Abrir"
-                }
-            }
         })
+    }
 
-        alarmViewModel.responseAlarmsViewModel.observe(this, Observer { alarmMutableList ->
-            alarmList.clear()
-            alarmList.addAll(alarmMutableList)
-            if (alarmList[0].idAlarm == "alarm01") {
-                intruderAlarm = alarmList[0]
-                fireAlarm = alarmList[1]
-            } else {
-                intruderAlarm = alarmList[0]
-                fireAlarm = alarmList[1]
-            }
-            if (intruderAlarm.alarmState == "on") {
-                binding.changeIntruderAlarmState.text = "Desactivar"
-                binding.intruderAlarmImg.setImageResource(R.drawable.ic_actived_alarm)
-            } else {
-                binding.changeIntruderAlarmState.text = "Activar"
-                binding.intruderAlarmImg.setImageResource(R.drawable.ic_desactived_alarm)
-            }
-            loadingDialog.hide()
-        })
+    private fun onSuccessIotInformation(ioTInfoResult: IoTInformationDTO) {
+        updateTemperatureAndHumidityOnUI(ioTInfoResult.lastRecord)
 
+        mainDoor   = ioTInfoResult.doors.find { door -> door.idDoor == 1 }!!
+        garageDoor = ioTInfoResult.doors.find { door -> door.idDoor == 2 }!!
+
+        mainDoor.let {mainDoor
+            updateMainDoorOnUI(mainDoor.doorState, mainDoor.updateDate)
+        }
+
+        garageDoor.let {
+            binding.garageLastUpdate.text = garageDoor.updateDate
+            binding.changeGarageDoorState.text = if (garageDoor.doorState == "open") "Cerrar" else "Abrir"
+        }
+
+        intruderAlarm = ioTInfoResult.alarms.find { alarm -> alarm.idAlarm == "alarm01" }!!
+        fireAlarm     = ioTInfoResult.alarms.find { alarm -> alarm.idAlarm == "alarm02" }!!
+
+        updateIntruderAlarmUI(intruderAlarm.alarmState)
+        loadingDialog.hide()
+    }
+
+    private fun updateIntruderAlarmUI(state: String) {
+        val buttonText = if (state == "on") "Desactivar" else "Activar"
+        val imageResource = if (state == "on") R.drawable.ic_actived_alarm else R.drawable.ic_desactived_alarm
+
+        binding.changeIntruderAlarmState.text = buttonText
+        binding.intruderAlarmImg.setImageResource(imageResource)
+    }
+
+    private fun updateTemperatureAndHumidityOnUI(lastRecord: DHT11Data) {
+        binding.lastTemperatureDate.text = lastRecord.date
+        binding.temperatureValue.text = "${lastRecord.temperature} C°"
+
+        binding.lastHumidityDate.text = lastRecord.date
+        binding.humidityPorcentage.text = "${lastRecord.humidity} %"
+    }
+
+    fun updateMainDoorOnUI(state: String, mainDoorUpdatedDate: String) {
+        binding.doorLastUpdate.text = mainDoorUpdatedDate
+
+        val doorText = if (state == "open") "Abierta" else "Cerrada"
+        binding.doorState.text = "Puerta principal: $doorText"
+        binding.changeDoorState.text = if (state == "open") "Cerrar" else "Abrir"
+        val doorImageResource = if (state == "open") R.drawable.ic_open_door else R.drawable.ic_close_door
+        binding.doorImg.setImageResource(doorImageResource)
     }
 
     private fun initListeners() {
@@ -158,9 +161,10 @@ class HomeActivity  : AppCompatActivity() {
         }
         binding.changeIntruderAlarmState.setOnClickListener {
             try {
-                intruderAlarm.alarmState = if (intruderAlarm.alarmState == "on") "off" else "on"
+                 val newIntruderAlarmState = if (intruderAlarm.alarmState == "on") "off" else "on"
+                alarmConditionsDTO = AlarmConditionsDTO(newIntruderAlarmState, 0)
                 lifecycleScope.launch {
-                    alarmViewModel.updateAlarmOnline(intruderAlarm)
+                    alarmViewModel.updateAlarmOnline(intruderAlarm.idAlarm, alarmConditionsDTO)
                 }
             } catch (e: IOException) {
                 Log.e("changeIntruderAlarm", e.toString())
@@ -190,34 +194,22 @@ class HomeActivity  : AppCompatActivity() {
         }
         dialogBinding.cancelButton.setOnClickListener { fireAlarmConfigurerDialog.hide()}
         dialogBinding.applyButton.setOnClickListener {
-            fireAlarm.condition = (dialogBinding.fireAlarmTemperature.text.toString()).toInt()
-            if(dialogBinding.activedRadioButton.isChecked){
-                fireAlarm.alarmState = "on"
-            }else{
-                fireAlarm.alarmState = "off"
-            }
-            try {
+            val newfireAlarmcondition = (dialogBinding.fireAlarmTemperature.text.toString()).toInt()
+            val newFireAlarmState = if(dialogBinding.activedRadioButton.isChecked)  "on" else "off"
 
-                lifecycleScope.launch {
-                    alarmViewModel.updateAlarmOnline(fireAlarm)
-                }
-            } catch (e: IOException) {
-                Log.e("changeIntruderAlarm", e.toString())
-            }
+            val fireAlarmConditons = AlarmConditionsDTO(newFireAlarmState, newfireAlarmcondition)
+
+            alarmViewModel.updateAlarmOnline(fireAlarm.idAlarm, fireAlarmConditons)
+
             fireAlarmConfigurerDialog.hide()
         }
     }
 
     private fun updateDoorState(door: Door) {
         try {
-            lifecycleScope.launch {
-                if(door.doorState == "open"){
-                    door.doorState = "close"
-                }else{
-                    door.doorState = "open"
-                }
-                doorViewModel.updateDoorOnline(door)
-            }
+
+            val newState: String = if(door.doorState == "open")  "close" else "open"
+            doorViewModel.updateDoorOnline(door.idDoor,newState)
         } catch (e: IOException) {
             Log.e("onClickChangeDoorState", e.toString())
         }
@@ -245,5 +237,10 @@ class HomeActivity  : AppCompatActivity() {
         val dialog = sessionDialog.create()
         dialog.window?.setBackgroundDrawableResource(R.drawable.light_blue_card_bg)
         dialog.show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        PreferencesProvider.clear(this)
     }
 }

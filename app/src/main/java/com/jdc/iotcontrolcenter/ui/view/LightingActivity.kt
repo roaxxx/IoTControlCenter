@@ -8,11 +8,14 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.jdc.iotcontrolcenter.R
 import com.jdc.iotcontrolcenter.data.model.Lightbulb
 import com.jdc.iotcontrolcenter.databinding.ActivityLightingBinding
@@ -21,9 +24,10 @@ import com.jdc.iotcontrolcenter.ui.view.adapters.LightBulbRecyclerViewAdapter
 import com.jdc.iotcontrolcenter.ui.viewmodel.LightbulbViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import com.jdc.iotcontrolcenter.data.Result
 
 @AndroidEntryPoint
-class LightingActivity : AppCompatActivity() {
+class LightingActivity : AppCompatActivity(), ErrorDialogListener {
 
     private lateinit var binding: ActivityLightingBinding
     private lateinit var recyclerViewAdapter: LightBulbRecyclerViewAdapter
@@ -32,11 +36,16 @@ class LightingActivity : AppCompatActivity() {
     private val COLOR_LIST = listOf(
         "0,0,1","1,0,0","0,1,1","0,1,0","1,1,0","1,0,1","1,1,1","0,0,0"
     )
+    private var isUnableToResquest: Boolean = true
+
     private val handler = Handler()
     private val updateInterval = 2000L
     private val dataPointHandler: Runnable = object : Runnable {
         override fun run() {
-            lightbulbViewModel.getLightbulbsList()
+            if(isUnableToResquest) {
+                lightbulbViewModel.getLightbulbsList()
+            }
+
             handler.postDelayed(this, updateInterval)
         }
     }
@@ -52,10 +61,22 @@ class LightingActivity : AppCompatActivity() {
     @SuppressLint("NotifyDataSetChanged")
     private fun changeRecyclerViewData() {
         lightbulbViewModel.lightbulListViewModel.observe(this, Observer { lightbulbMutablelist ->
-            lightbulbList.clear()
-            lightbulbList.addAll(lightbulbMutablelist)
-            recyclerViewAdapter.notifyDataSetChanged()
+            when(lightbulbMutablelist){
+                is Result.Success ->{
+                    lightbulbList.clear()
+                    lightbulbList.addAll(lightbulbMutablelist.data)
+                    recyclerViewAdapter.notifyDataSetChanged()
+                }
+                is Result.Error -> showErrorConnectionDialog()
+            }
+
         })
+    }
+
+    private fun showErrorConnectionDialog() {
+        val errorDialogFragment = ErrorDialogFragment()
+        errorDialogFragment.show(supportFragmentManager, "ERROR_DIALOG")
+        handler.removeCallbacks(dataPointHandler)
     }
 
     private fun initRecyclerView() {
@@ -68,19 +89,12 @@ class LightingActivity : AppCompatActivity() {
     }
 
     private fun changeLighbulbState(i: Int) {
-        try{
-            if(lightbulbList[i].bulbControlerType=="RGB"){
+        try {
+            if (lightbulbList[i].bulbControlerType == "RGB") {
                 showColorPickerDialog(lightbulbList[i])
-
-            }else{
-                if(lightbulbList[i].bulbValue=="0"){
-                    lightbulbList[i].bulbValue="1"
-                }else{
-                    lightbulbList[i].bulbValue="0"
-                }
-            }
-            lifecycleScope.launch {
-                lightbulbViewModel.updateLightbulbState(lightbulbList[i])
+            } else {
+                val newLighbulbValue = if (lightbulbList[i].bulbValue == "0") "1" else "0"
+                lightbulbViewModel.updateLightbulbState(lightbulbList[i].idLightbulbs, newLighbulbValue)
             }
         }catch ( e: IndexOutOfBoundsException){
             Log.e("listado actualizandose","$e")
@@ -106,17 +120,13 @@ class LightingActivity : AppCompatActivity() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 pickerColor = COLOR_LIST[position]
             }
-
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }
         }
         colorPickerBinding.cancelButton.setOnClickListener { colorPickerDialog.hide() }
         colorPickerBinding.applyButton.setOnClickListener {
-            lifecycleScope.launch {
-                lightbulb.bulbValue = pickerColor
-                lightbulbViewModel.updateLightbulbState(lightbulb)
-            }
+            lightbulbViewModel.updateLightbulbState(lightbulb.idLightbulbs, pickerColor)
         }
     }
 
@@ -128,5 +138,9 @@ class LightingActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         handler.removeCallbacks(dataPointHandler)
+    }
+
+    override fun onContinueButtonClicked() {
+        handler.postDelayed(dataPointHandler, updateInterval)
     }
 }

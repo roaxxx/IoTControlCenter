@@ -12,6 +12,7 @@ import com.jdc.iotcontrolcenter.databinding.LoginMainBinding
 import com.jdc.iotcontrolcenter.domain.impl.LoginUseCaseImp
 import com.jdc.iotcontrolcenter.ui.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import com.jdc.iotcontrolcenter.data.Result
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
@@ -31,25 +32,20 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun onLoginObserve() {
-        loginViewModel.responseLoginModel.observe(this, Observer { loginResponse ->
+        loginViewModel.loginResultModel.observe(this, Observer { loginResponse ->
 
-            Log.i("loginResponse","La respuesta observada $loginResponse")
-            if(loginResponse == LoginUseCaseImp.USER_CREDENTIAL_ERROR){
-                SimpleDialog.makeDialog(
-                    this,
-                    "Error al iniciar sesión",
-                    "Usuario i/o contraseña incorrectos"
-                )
-            }else if (loginResponse == LoginUseCaseImp.SERVER_CONNECTION_ERROR){
-                SimpleDialog.makeDialog(
-                    this,
-                    "Error de conexión",
-                    "Ha ocurrido un error al intentar conectar al servidor, por favor, intentelo más tarde"
-                )
-            }else{
-                val intent = Intent(this@LoginActivity, HomeActivity::class.java)
-                intent.putExtra("userName",loginResponse)
-                startActivity(intent)
+            when(loginResponse){
+                is Result.Success ->{
+                    startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
+                }
+                is Result.Error -> {
+                    val error = loginResponse.exception.toString()
+                    SimpleDialog.makeDialog(
+                        this,
+                        "Error al iniciar sesión",
+                        "$error"
+                    )
+                }
             }
             loadingDialog.hide()
         })

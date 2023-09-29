@@ -4,29 +4,30 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jdc.iotcontrolcenter.data.model.DHT11Data
-import com.jdc.iotcontrolcenter.domain.impl.Dht11SensorUseCaseImpl
+import com.jdc.iotcontrolcenter.domain.Dht11SensorUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.jdc.iotcontrolcenter.data.Result
+
 @HiltViewModel
-class Dht11SensorViewModel @Inject constructor(private val dht11SensorManager: Dht11SensorUseCaseImpl): ViewModel() {
-    val dhtSesorLastRecordObservable = MutableLiveData<DHT11Data>()
-    val dhtRecordListObservable = MutableLiveData<MutableList<DHT11Data>>()
+class Dht11SensorViewModel @Inject constructor(
+    private val dht11SensorManager: Dht11SensorUseCase
+): ViewModel() {
 
+    val clearDhtDataModel = MutableLiveData<Result<Boolean>>()
+    val dhtRecordModel = MutableLiveData<Result<List<DHT11Data>>>()
 
-    fun getLastRecord(){
-        viewModelScope.launch {
-            dhtSesorLastRecordObservable.postValue(dht11SensorManager.getSensorLatestData())
-        }
-    }
 
     fun getAllDhtRecordList(){
         viewModelScope.launch {
-            dhtRecordListObservable.postValue(dht11SensorManager.getAllDHTRecords())
+            dhtRecordModel.postValue(dht11SensorManager.getAllDht11Record())
         }
     }
 
     fun clearDhtSensorRecords(){
-        viewModelScope.launch { dht11SensorManager.clearRecords() }
+        viewModelScope.launch {
+            clearDhtDataModel.postValue(dht11SensorManager.clearRecords())
+        }
     }
 }
